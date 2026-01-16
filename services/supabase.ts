@@ -1,24 +1,24 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Nettoyage robuste des valeurs
+// Nettoyage robuste pour ne garder que la clé pure sans texte parasite
 const cleanValue = (val: any): string => {
   if (typeof val !== 'string') return "";
-  // On enlève les guillemets, on trim, et SURTOUT on ne garde que le premier mot (avant l'espace)
-  return val.trim().replace(/["']/g, "").split(/\s+/)[0];
+  // Supprime tout ce qui n'est pas un caractère alphanumérique de clé (lettres, chiffres, points, tirets, underscores)
+  // On s'arrête dès qu'on rencontre un caractère invalide comme un espace ou un retour à la ligne
+  const match = val.trim().replace(/["']/g, "").match(/^[A-Za-z0-9\._\-]+/);
+  return match ? match[0] : "";
 };
 
 const isKeyValid = (key: string) =>
   key && 
   key.startsWith('eyJ') && 
-  key.length > 50;
+  key.length > 100;
 
-// Récupération intelligente : on cherche la première source qui contient une clé VALIDE (eyJ)
 const getEnv = (key: string): string => {
   try {
     const valFromWindow = cleanValue((window as any).process?.env?.[key]);
     const valFromMeta = cleanValue((import.meta as any).env?.[key]);
     
-    // Si on cherche la clé API, on privilégie celle qui commence par eyJ
     if (key === 'VITE_SUPABASE_ANON_KEY') {
       if (isKeyValid(valFromWindow)) return valFromWindow;
       if (isKeyValid(valFromMeta)) return valFromMeta;
@@ -50,24 +50,12 @@ if (isUrlValid(supabaseUrl) && isKeyValid(supabaseAnonKey)) {
       }
     });
     
-    client.from('patients').select('id', { head: true, count: 'estimated' }).limit(1).then(({ error }) => {
-      if (!error) {
-        console.log("✅ CONNECTÉ À SUPABASE (GCMHE.MA)");
-      } else {
-        console.warn("⚠️ Connexion établie mais erreur de droits (RLS) :", error.message);
-      }
-    });
+    console.log("✅ INITIALISATION SUPABASE REUSSIE");
   } catch (err) {
     console.error("❌ Erreur client Supabase:", err);
   }
 } else {
-  if (supabaseAnonKey.startsWith('ssb_')) {
-    console.error("❌ ERREUR : La clé '" + supabaseAnonKey.substring(0, 15) + "...' appartient à CLERK, pas à SUPABASE.");
-  } else if (supabaseUrl && supabaseAnonKey) {
-    console.warn("⚠️ Mode Local : La clé fournie n'est pas un jeton JWT valide (Format incorrect ou texte parasite).");
-  } else {
-    console.log("ℹ️ Mode Stockage Local (Navigateur) activé.");
-  }
+  console.warn("⚠️ Mode Local : Supabase non configuré ou clés corrompues.");
 }
 
 export const supabase = client;
