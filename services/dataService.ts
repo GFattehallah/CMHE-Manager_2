@@ -53,11 +53,12 @@ export const DataService = {
     }
   },
   deleteUser: async (id: string) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('users').delete().eq('id', id);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const users = getFromStorage(KEYS.USERS, MOCK_USERS).filter(u => u.id !== id);
     saveToStorage(KEYS.USERS, users);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('users').delete().eq('id', id); } catch (e) { console.error(e); }
-    }
   },
 
   // --- PATIENTS ---
@@ -83,11 +84,12 @@ export const DataService = {
     }
   },
   deletePatient: async (id: string) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('patients').delete().eq('id', id);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const patients = getFromStorage(KEYS.PATIENTS, MOCK_PATIENTS).filter(p => p.id !== id);
     saveToStorage(KEYS.PATIENTS, patients);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('patients').delete().eq('id', id); } catch (e) { console.error(e); }
-    }
   },
 
   // --- RENDEZ-VOUS ---
@@ -113,11 +115,12 @@ export const DataService = {
     }
   },
   deleteAppointment: async (id: string) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('appointments').delete().eq('id', id);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const appts = getFromStorage(KEYS.APPOINTMENTS, MOCK_APPOINTMENTS).filter(a => a.id !== id);
     saveToStorage(KEYS.APPOINTMENTS, appts);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('appointments').delete().eq('id', id); } catch (e) { console.error(e); }
-    }
   },
 
   // --- FACTURES ---
@@ -143,18 +146,20 @@ export const DataService = {
     }
   },
   deleteInvoice: async (id: string) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('invoices').delete().eq('id', id);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const invoices = getFromStorage(KEYS.INVOICES, MOCK_INVOICES).filter(i => i.id !== id);
     saveToStorage(KEYS.INVOICES, invoices);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('invoices').delete().eq('id', id); } catch (e) { console.error(e); }
-    }
   },
   deleteInvoicesBulk: async (ids: string[]) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('invoices').delete().in('id', ids);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const invoices = getFromStorage(KEYS.INVOICES, MOCK_INVOICES).filter(i => !ids.includes(i.id));
     saveToStorage(KEYS.INVOICES, invoices);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('invoices').delete().in('id', ids); } catch (e) { console.error(e); }
-    }
   },
 
   // --- CONSULTATIONS ---
@@ -180,24 +185,26 @@ export const DataService = {
     }
   },
   deleteConsultation: async (id: string) => {
+    // 1. Suppression Cloud d'abord
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('consultations').delete().eq('id', id);
+      if (error) {
+        console.error("Cloud delete error:", error);
+        throw new Error(`Erreur de synchronisation Cloud: ${error.message}`);
+      }
+    }
+    
+    // 2. Suppression locale si cloud OK
     const consultations = getFromStorage(KEYS.CONSULTATIONS, []).filter(c => c.id !== id);
     saveToStorage(KEYS.CONSULTATIONS, consultations);
-    if (isSupabaseConfigured()) {
-      try { 
-        const { error } = await supabase!.from('consultations').delete().eq('id', id);
-        if (error) console.error("Cloud delete error:", error);
-      } catch (e) { console.error(e); }
-    }
   },
   deleteConsultationsBulk: async (ids: string[]) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('consultations').delete().in('id', ids);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const consultations = getFromStorage(KEYS.CONSULTATIONS, []).filter(c => !ids.includes(c.id));
     saveToStorage(KEYS.CONSULTATIONS, consultations);
-    if (isSupabaseConfigured()) {
-      try { 
-        const { error } = await supabase!.from('consultations').delete().in('id', ids);
-        if (error) console.error("Cloud bulk delete error:", error);
-      } catch (e) { console.error(e); }
-    }
   },
 
   // --- DEPENSES ---
@@ -223,17 +230,19 @@ export const DataService = {
     }
   },
   deleteExpense: async (id: string) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('expenses').delete().eq('id', id);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const expenses = getFromStorage(KEYS.EXPENSES, MOCK_EXPENSES).filter(e => e.id !== id);
     saveToStorage(KEYS.EXPENSES, expenses);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('expenses').delete().eq('id', id); } catch (e) { console.error(e); }
-    }
   },
   deleteExpensesBulk: async (ids: string[]) => {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase!.from('expenses').delete().in('id', ids);
+      if (error) throw new Error(`Erreur Cloud: ${error.message}`);
+    }
     const expenses = getFromStorage(KEYS.EXPENSES, MOCK_EXPENSES).filter(e => !ids.includes(e.id));
     saveToStorage(KEYS.EXPENSES, expenses);
-    if (isSupabaseConfigured()) {
-      try { await supabase!.from('expenses').delete().in('id', ids); } catch (e) { console.error(e); }
-    }
   }
 };

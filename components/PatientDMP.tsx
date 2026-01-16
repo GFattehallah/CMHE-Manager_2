@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   User as UserType, Shield, Phone, Mail, MapPin, Calendar, Activity, 
   AlertCircle, FileText, Pill, CreditCard, ChevronLeft, 
-  Clock, Heart, Scale, Thermometer, ExternalLink, Hash
+  Clock, Heart, Scale, Thermometer, ExternalLink, Hash, Trash2, Loader2
 } from 'lucide-react';
 import { DataService } from '../services/dataService';
 import { AuthService } from '../services/authService';
@@ -19,27 +18,41 @@ export const PatientDMP: React.FC = () => {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Fix: DataService calls return Promises, so they cannot be used in synchronous useMemo.
-  // Using useEffect to fetch data asynchronously.
+  const loadData = async () => {
+    const [pats, cons, invs, apts] = await Promise.all([
+      DataService.getPatients(),
+      DataService.getConsultations(),
+      DataService.getInvoices(),
+      DataService.getAppointments()
+    ]);
+    
+    setPatient(pats.find(p => p.id === patientId));
+    setConsultations(cons.filter(c => c.patientId === patientId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    setInvoices(invs.filter(i => i.patientId === patientId));
+    setAppointments(apts.filter(a => a.patientId === patientId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      const [pats, cons, invs, apts] = await Promise.all([
-        DataService.getPatients(),
-        DataService.getConsultations(),
-        DataService.getInvoices(),
-        DataService.getAppointments()
-      ]);
-      
-      setPatient(pats.find(p => p.id === patientId));
-      setConsultations(cons.filter(c => c.patientId === patientId)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-      setInvoices(invs.filter(i => i.patientId === patientId));
-      setAppointments(apts.filter(a => a.patientId === patientId)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-    };
     loadData();
   }, [patientId]);
+
+  const handleDeleteConsultation = async (id: string) => {
+    if (window.confirm('Confirmer la suppression de cette consultation de l\'historique ? Cette action est irréversible.')) {
+      setIsDeleting(true);
+      try {
+        await DataService.deleteConsultation(id);
+        setConsultations(prev => prev.filter(c => c.id !== id));
+      } catch (err) {
+        alert("Erreur lors de la suppression.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
 
   if (!patient) {
     return (
@@ -67,6 +80,7 @@ export const PatientDMP: React.FC = () => {
           <ChevronLeft size={20} /> Retour
         </button>
         <div className="flex gap-2">
+           {isDeleting && <Loader2 size={16} className="animate-spin text-medical-600" />}
            <button onClick={() => window.print()} className="bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-600 font-bold flex items-center gap-2 hover:bg-slate-50 transition">
              Imprimer Dossier
            </button>
@@ -81,10 +95,7 @@ export const PatientDMP: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Column: Essential Profile */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm text-center">
             <div className="w-24 h-24 bg-medical-50 text-medical-600 rounded-full flex items-center justify-center text-3xl font-black mx-auto mb-4 border-4 border-white shadow-md">
@@ -123,7 +134,6 @@ export const PatientDMP: React.FC = () => {
             </div>
           </div>
 
-          {/* Medical Identity Card */}
           <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={80}/></div>
             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
@@ -168,10 +178,7 @@ export const PatientDMP: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Life Timeline & History */}
         <div className="lg:col-span-8 space-y-6">
-          
-          {/* Quick Stats Banner */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-3xl border border-slate-200 flex items-center gap-4">
                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Activity size={20}/></div>
@@ -196,7 +203,6 @@ export const PatientDMP: React.FC = () => {
             </div>
           </div>
 
-          {/* Timeline of Care */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                <h3 className="font-black text-slate-800 uppercase tracking-tighter text-lg flex items-center gap-2">
@@ -215,21 +221,29 @@ export const PatientDMP: React.FC = () => {
                  </div>
                ) : (
                  <div className="relative pl-8 border-l-2 border-slate-100 space-y-10">
-                    {/* Merge and sort all events for a true timeline */}
                     {consultations.map(c => (
-                      <div key={c.id} className="relative">
+                      <div key={c.id} className="relative group">
                          <div className="absolute -left-[41px] top-0 w-5 h-5 bg-medical-600 rounded-full border-4 border-white shadow-sm flex items-center justify-center">
                             <Activity size={8} className="text-white"/>
                          </div>
-                         <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 hover:border-medical-200 transition-all">
+                         <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 hover:border-medical-200 transition-all relative">
                             <div className="flex justify-between items-start mb-4">
                                <div>
                                   <span className="text-[9px] font-black uppercase text-medical-600 bg-medical-50 px-2 py-1 rounded-lg">Consultation</span>
                                   <h4 className="text-sm font-black text-slate-800 mt-2">Diagnostic: {c.diagnosis}</h4>
                                </div>
-                               <div className="text-right">
-                                  <p className="text-xs font-black text-slate-400">{new Date(c.date).toLocaleDateString('fr-FR')}</p>
-                                  <p className="text-[9px] font-bold text-slate-300 uppercase">{new Date(c.date).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</p>
+                               <div className="flex items-start gap-4">
+                                  <div className="text-right">
+                                     <p className="text-xs font-black text-slate-400">{new Date(c.date).toLocaleDateString('fr-FR')}</p>
+                                     <p className="text-[9px] font-bold text-slate-300 uppercase">{new Date(c.date).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</p>
+                                  </div>
+                                  <button 
+                                    onClick={() => handleDeleteConsultation(c.id)}
+                                    className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 bg-white border border-rose-100 rounded-xl transition-all shadow-sm flex items-center justify-center"
+                                    title="Supprimer la consultation"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
                                </div>
                             </div>
                             
