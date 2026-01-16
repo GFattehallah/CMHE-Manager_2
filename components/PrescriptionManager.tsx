@@ -100,6 +100,7 @@ export const PrescriptionManager: React.FC = () => {
           onClick={() => setIsQuickPrescriptionOpen(true)}
           className="bg-medical-600 hover:bg-medical-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-lg shadow-medical-100 font-bold text-sm"
         >
+          {/* Fix: Corrected typo size(20) to size={20} to fix 'boolean' vs 'string|number' type error */}
           <Plus size={20} /> Ordonnance Rapide
         </button>
       </div>
@@ -252,6 +253,7 @@ export const PrescriptionManager: React.FC = () => {
 
 const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
     const [patientId, setPatientId] = useState('');
+    const [diagnosis, setDiagnosis] = useState('Consultation Standard');
     const [meds, setMeds] = useState<string[]>(['']);
 
     const handleSave = (e: React.FormEvent) => {
@@ -265,7 +267,7 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
             appointmentId: 'quick',
             date: new Date().toISOString(),
             symptoms: 'Renouvellement Ordonnance / Rapide',
-            diagnosis: 'Consultation Standard',
+            diagnosis: diagnosis,
             notes: 'Ordonnance rapide',
             prescription: validMeds
         };
@@ -294,12 +296,24 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
                             ))}
                         </select>
                     </div>
+
+                    {/* AJOUT DU TEXTAREA POUR LE DIAGNOSTIC DANS L'ORDONNANCE RAPIDE */}
+                    <div>
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Diagnostic(s)</label>
+                        <textarea 
+                            className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-bold bg-white h-20 resize-none"
+                            value={diagnosis}
+                            onChange={e => setDiagnosis(e.target.value)}
+                            placeholder="Entrez le diagnostic..."
+                        />
+                    </div>
+
                     <div>
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex justify-between">
                           <span>Médicaments & Posologies</span>
                           <button type="button" onClick={() => setMeds([...meds, ''])} className="text-medical-600 hover:underline">+ Ajouter ligne</button>
                         </label>
-                        <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                        <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
                             {meds.map((med, idx) => (
                                 <div key={idx} className="flex gap-2 items-center animate-fade-in">
                                     <span className="w-6 flex items-center justify-center text-slate-300 font-black text-[10px]">{idx + 1}</span>
