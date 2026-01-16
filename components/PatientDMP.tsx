@@ -231,9 +231,9 @@ export const PatientDMP: React.FC = () => {
                                <div>
                                   <span className="text-[9px] font-black uppercase text-medical-600 bg-medical-50 px-2 py-1 rounded-lg">Consultation</span>
                                   <div className="mt-2">
-                                     <p className="text-[10px] font-black bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100 uppercase inline-block whitespace-pre-wrap">
+                                     <div className="text-[10px] font-black bg-indigo-50 text-indigo-700 px-3 py-2 rounded-xl border border-indigo-100 uppercase whitespace-pre-wrap leading-relaxed">
                                          {c.diagnosis}
-                                     </p>
+                                     </div>
                                   </div>
                                </div>
                                <div className="flex items-start gap-4">
