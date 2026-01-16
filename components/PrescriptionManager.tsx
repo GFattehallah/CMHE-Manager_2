@@ -100,7 +100,6 @@ export const PrescriptionManager: React.FC = () => {
           onClick={() => setIsQuickPrescriptionOpen(true)}
           className="bg-medical-600 hover:bg-medical-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-lg shadow-medical-100 font-bold text-sm"
         >
-          {/* Fix: Corrected typo size(20) to size={20} to fix 'boolean' vs 'string|number' type error */}
           <Plus size={20} /> Ordonnance Rapide
         </button>
       </div>
@@ -297,11 +296,11 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
                         </select>
                     </div>
 
-                    {/* AJOUT DU TEXTAREA POUR LE DIAGNOSTIC DANS L'ORDONNANCE RAPIDE */}
+                    {/* FORCE TEXTAREA POUR DIAGNOSTIC DANS ORDONNANCE RAPIDE */}
                     <div>
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Diagnostic(s)</label>
                         <textarea 
-                            className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-bold bg-white h-20 resize-none"
+                            className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-bold bg-white h-24 resize-y"
                             value={diagnosis}
                             onChange={e => setDiagnosis(e.target.value)}
                             placeholder="Entrez le diagnostic..."

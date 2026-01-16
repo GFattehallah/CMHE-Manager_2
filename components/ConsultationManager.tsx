@@ -228,7 +228,7 @@ export const ConsultationManager: React.FC = () => {
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <label className="block text-sm font-medium text-slate-700 mb-2">Symptômes & Motif</label>
                             <textarea 
-                                className="w-full p-3 border border-slate-200 rounded-lg h-24 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-none"
+                                className="w-full p-3 border border-slate-200 rounded-lg h-24 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-y"
                                 placeholder="Le patient se plaint de..."
                                 value={symptoms}
                                 onChange={(e) => setSymptoms(e.target.value)}
@@ -251,12 +251,12 @@ export const ConsultationManager: React.FC = () => {
                             )}
                         </div>
 
-                        {/* DIAGNOSTIC COMME SYMPTOMES (TEXTAREA) */}
+                        {/* DIAGNOSTIC : FORCE TEXTAREA ICI */}
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <label className="block text-sm font-medium text-slate-700 mb-2">Diagnostic(s)</label>
                             <textarea 
-                                className="w-full p-3 border border-slate-200 rounded-lg h-24 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-none"
-                                placeholder="Diagnostic médical (plusieurs lignes possibles)..."
+                                className="w-full p-3 border border-slate-200 rounded-lg h-32 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-y"
+                                placeholder="Saisissez le diagnostic médical (plusieurs lignes possibles)..."
                                 value={diagnosis}
                                 onChange={(e) => setDiagnosis(e.target.value)}
                             />
@@ -372,8 +372,7 @@ export const ConsultationManager: React.FC = () => {
                                     </div>
                                     <div className="mb-3 pl-12">
                                         <p className="text-sm text-slate-800 font-black mb-1">Diagnostic(s):</p>
-                                        {/* Utilisation de whitespace-pre-wrap pour respecter les sauts de ligne */}
-                                        <p className="text-xs text-indigo-700 font-bold bg-indigo-50 p-2 rounded-lg border border-indigo-100 mb-2 whitespace-pre-wrap">{consult.diagnosis}</p>
+                                        <p className="text-xs text-indigo-700 font-bold bg-indigo-50 p-2 rounded-lg border border-indigo-100 mb-2 whitespace-pre-wrap leading-relaxed">{consult.diagnosis}</p>
                                         <p className="text-xs text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg italic whitespace-pre-wrap">"{consult.symptoms}"</p>
                                     </div>
                                     <div className="bg-slate-900/5 p-4 rounded-xl text-xs text-slate-600 ml-12 border border-slate-100">
