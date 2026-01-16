@@ -1,45 +1,27 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Nettoyage robuste pour ne garder que la clé pure sans texte parasite
-const cleanValue = (val: any): string => {
-  if (typeof val !== 'string') return "";
-  // Supprime tout ce qui n'est pas un caractère alphanumérique de clé (lettres, chiffres, points, tirets, underscores)
-  // On s'arrête dès qu'on rencontre un caractère invalide comme un espace ou un retour à la ligne
-  const match = val.trim().replace(/["']/g, "").match(/^[A-Za-z0-9\._\-]+/);
-  return match ? match[0] : "";
-};
-
-const isKeyValid = (key: string) =>
-  key && 
-  key.startsWith('eyJ') && 
-  key.length > 100;
-
-const getEnv = (key: string): string => {
+// Fonction simple pour récupérer les clés sans nettoyage risqué
+const getRawEnv = (key: string): string => {
   try {
-    const valFromWindow = cleanValue((window as any).process?.env?.[key]);
-    const valFromMeta = cleanValue((import.meta as any).env?.[key]);
-    
-    if (key === 'VITE_SUPABASE_ANON_KEY') {
-      if (isKeyValid(valFromWindow)) return valFromWindow;
-      if (isKeyValid(valFromMeta)) return valFromMeta;
-      return valFromWindow || valFromMeta || "";
-    }
-    
-    return valFromWindow || valFromMeta || "";
+    const valFromMeta = (import.meta as any).env?.[key];
+    const valFromWindow = (window as any).process?.env?.[key];
+    const raw = valFromMeta || valFromWindow || "";
+    return typeof raw === 'string' ? raw.trim().replace(/["']/g, "") : "";
   } catch (e) {
     return "";
   }
 };
 
-const supabaseUrl = getEnv('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+const supabaseUrl = getRawEnv('VITE_SUPABASE_URL');
+const supabaseAnonKey = getRawEnv('VITE_SUPABASE_ANON_KEY');
 
-let client: SupabaseClient | null = null;
+const isKeyValid = (key: string) => 
+  key && key.startsWith('eyJ') && key.length > 100;
 
 const isUrlValid = (url: string) => 
-  url && 
-  url.startsWith('https://') && 
-  url.includes('supabase.co');
+  url && url.startsWith('https://') && url.includes('supabase.co');
+
+let client: SupabaseClient | null = null;
 
 if (isUrlValid(supabaseUrl) && isKeyValid(supabaseAnonKey)) {
   try {
@@ -49,19 +31,16 @@ if (isUrlValid(supabaseUrl) && isKeyValid(supabaseAnonKey)) {
         autoRefreshToken: true,
       }
     });
-    
-    console.log("✅ INITIALISATION SUPABASE REUSSIE");
+    console.log("✅ Supabase configuré avec succès");
   } catch (err) {
-    console.error("❌ Erreur client Supabase:", err);
+    console.error("❌ Erreur Supabase:", err);
   }
-} else {
-  console.warn("⚠️ Mode Local : Supabase non configuré ou clés corrompues.");
 }
 
 export const supabase = client;
 
 export const isSupabaseConfigured = (): boolean => {
-  return !!supabase && isUrlValid(supabaseUrl) && isKeyValid(supabaseAnonKey);
+  return !!supabase;
 };
 
 export const getConfigurationStatus = () => {

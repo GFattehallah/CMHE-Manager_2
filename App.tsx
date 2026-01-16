@@ -138,7 +138,7 @@ const MainLayout: React.FC<{user: User, onLogout: () => void}> = ({ user, onLogo
                     1. Ouvrir Supabase <ExternalLink size={10}/>
                   </a>
                   <div className="p-2 bg-white rounded-lg border border-slate-100 text-[9px] text-slate-700">
-                    2. Allez dans <strong>Settings &gt; API</strong>
+                    2. Allez dans <strong>Settings {" > "} API</strong>
                   </div>
                   <div className="p-2 bg-white rounded-lg border border-slate-100 text-[9px] text-slate-700">
                     3. Copiez <strong>anon public</strong> (eyJ...)
