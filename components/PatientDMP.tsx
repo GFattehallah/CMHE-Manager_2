@@ -231,6 +231,7 @@ export const PatientDMP: React.FC = () => {
                                <div>
                                   <span className="text-[9px] font-black uppercase text-medical-600 bg-medical-50 px-2 py-1 rounded-lg">Consultation</span>
                                   <div className="mt-2">
+                                     {/* Utilisation de whitespace-pre-wrap pour respecter les sauts de ligne */}
                                      <div className="text-[10px] font-black bg-indigo-50 text-indigo-700 px-3 py-2 rounded-xl border border-indigo-100 uppercase whitespace-pre-wrap leading-relaxed">
                                          {c.diagnosis}
                                      </div>
@@ -255,7 +256,7 @@ export const PatientDMP: React.FC = () => {
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Symptômes</p>
-                                   <p className="text-xs text-slate-600 italic leading-relaxed whitespace-pre-wrap">{c.symptoms}</p>
+                                   <p className="text-xs text-slate-600 italic leading-relaxed whitespace-pre-wrap italic">"{c.symptoms}"</p>
                                 </div>
                                 <div className="space-y-2">
                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Traitement</p>
