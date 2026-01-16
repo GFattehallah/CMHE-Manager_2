@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMHE Manager - Studio Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      // Injection des variables d'environnement
+      window.process = { 
+        env: { 
+          NODE_ENV: 'development',
+          VITE_SUPABASE_URL: "https://vvwjpnovdkkivmtcygyz.supabase.co",
+          VITE_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2d2pwbm92ZGtraXZtdGN5Z3l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNzQ3NDksImV4cCI6MjA4MzY1MDc0OX0.WPmoYwwk4iYzlgLh7T_Whszf_KIBTVhu-QIhNZp0ik4", 
+          API_KEY: "" 
+        } 
+      };
+      
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            colors: {
+              medical: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                900: '#0c4a6e',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @media print {
+        @page { size: A5 portrait; margin: 0; }
+        .no-print { display: none !important; }
+        .print-only { display: block !important; }
+        #root { display: none; }
+      }
+      .print-only { display: none; }
+      .pdf-container { position: fixed; left: -9999px; top: 0; width: 148mm; height: 210mm; background: white; z-index: -1; }
+      @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@7.1.1?deps=react@19.0.0,react-dom@19.0.0",
+    "@google/genai": "https://esm.sh/@google/genai@1.33.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0?deps=react@19.0.0",
+    "recharts": "https://esm.sh/recharts@2.15.0?deps=react@19.0.0,react-dom@19.0.0",
+    "xlsx": "https://esm.sh/xlsx@0.18.5",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.45.0",
+    "@fullcalendar/core": "https://esm.sh/@fullcalendar/core@6.1.15",
+    "@fullcalendar/react": "https://esm.sh/@fullcalendar/react@6.1.15?deps=react@19.0.0,react-dom@19.0.0,@fullcalendar/core@6.1.15",
+    "@fullcalendar/daygrid": "https://esm.sh/@fullcalendar/daygrid@6.1.15?deps=@fullcalendar/core@6.1.15",
+    "@fullcalendar/timegrid": "https://esm.sh/@fullcalendar/timegrid@6.1.15?deps=@fullcalendar/core@6.1.15",
+    "@fullcalendar/interaction": "https://esm.sh/@fullcalendar/interaction@6.1.15?deps=@fullcalendar/core@6.1.15",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "path": "https://esm.sh/path@^0.12.7",
+    "url": "https://esm.sh/url@^0.11.4"
+  }
+}
+</script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased overflow-hidden">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  </body>
+</html>

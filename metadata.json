@@ -1,0 +1,7 @@
+{
+  "name": "CMHE Manager Pro",
+  "description": "Système de gestion médicale pour gcmhe.ma - Version Studio",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
