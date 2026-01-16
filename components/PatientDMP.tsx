@@ -230,7 +230,11 @@ export const PatientDMP: React.FC = () => {
                             <div className="flex justify-between items-start mb-4">
                                <div>
                                   <span className="text-[9px] font-black uppercase text-medical-600 bg-medical-50 px-2 py-1 rounded-lg">Consultation</span>
-                                  <h4 className="text-sm font-black text-slate-800 mt-2">Diagnostic: {c.diagnosis}</h4>
+                                  <div className="mt-2">
+                                     <p className="text-[10px] font-black bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100 uppercase inline-block whitespace-pre-wrap">
+                                         {c.diagnosis}
+                                     </p>
+                                  </div>
                                </div>
                                <div className="flex items-start gap-4">
                                   <div className="text-right">
@@ -239,7 +243,7 @@ export const PatientDMP: React.FC = () => {
                                   </div>
                                   <button 
                                     onClick={() => handleDeleteConsultation(c.id)}
-                                    className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 bg-white border border-rose-100 rounded-xl transition-all shadow-sm flex items-center justify-center"
+                                    className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 bg-white border border-rose-100 rounded-xl transition-all shadow-sm flex items-center justify-center cursor-pointer"
                                     title="Supprimer la consultation"
                                   >
                                     <Trash2 size={16} />
@@ -251,7 +255,7 @@ export const PatientDMP: React.FC = () => {
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Symptômes</p>
-                                   <p className="text-xs text-slate-600 italic leading-relaxed">{c.symptoms}</p>
+                                   <p className="text-xs text-slate-600 italic leading-relaxed whitespace-pre-wrap">{c.symptoms}</p>
                                 </div>
                                 <div className="space-y-2">
                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Traitement</p>

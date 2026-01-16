@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataService } from '../services/dataService';
 import { GeminiService } from '../services/geminiService';
 import { Patient, Consultation } from '../types';
-import { Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, Download, Eye, EyeOff, Trash2, CheckSquare, Square, MinusSquare, Loader2 } from 'lucide-react';
+import { Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, Download, Eye, EyeOff, Trash2, CheckSquare, Square, MinusSquare, Loader2, Plus } from 'lucide-react';
 import { PrescriptionTemplate } from './PrescriptionTemplate';
 
 export const ConsultationManager: React.FC = () => {
@@ -60,7 +60,7 @@ export const ConsultationManager: React.FC = () => {
   };
 
   const handleGeneratePrescription = async () => {
-    if (!diagnosis) {
+    if (!diagnosis.trim()) {
       alert("Veuillez entrer un diagnostic d'abord");
       return;
     }
@@ -90,7 +90,7 @@ export const ConsultationManager: React.FC = () => {
 
   const handleSave = async () => {
     if (!selectedPatient) return;
-    if (!diagnosis) {
+    if (!diagnosis.trim()) {
         alert("Le diagnostic est obligatoire pour sauvegarder.");
         return;
     }
@@ -125,13 +125,9 @@ export const ConsultationManager: React.FC = () => {
       setIsDeleting(true);
       try {
           await DataService.deleteConsultation(id);
-          // Update local state immediately for better UX
           setConsultationHistory(prev => prev.filter(c => c.id !== id));
-          alert("Consultation supprimée.");
       } catch (err) {
-          console.error(err);
-          alert("Erreur lors de la suppression. Vérifiez vos droits d'accès Supabase (RLS).");
-          await loadHistory(); // Re-sync in case of error
+          alert("Erreur lors de la suppression.");
       } finally {
           setIsDeleting(false);
       }
@@ -148,9 +144,7 @@ export const ConsultationManager: React.FC = () => {
           setSelectedIds([]);
           alert("Sélection supprimée.");
       } catch (err) {
-          console.error(err);
           alert("Erreur lors de la suppression groupée.");
-          await loadHistory();
       } finally {
           setIsDeleting(false);
       }
@@ -257,21 +251,22 @@ export const ConsultationManager: React.FC = () => {
                             )}
                         </div>
 
+                        {/* DIAGNOSTIC COMME SYMPTOMES */}
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Diagnostic</label>
-                            <div className="flex gap-2">
-                                <input 
-                                    className="flex-1 p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-medical-500 outline-none"
-                                    value={diagnosis}
-                                    onChange={(e) => setDiagnosis(e.target.value)}
-                                    placeholder="Diagnostic médical..."
-                                />
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Diagnostic(s)</label>
+                            <textarea 
+                                className="w-full p-3 border border-slate-200 rounded-lg h-24 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-none"
+                                placeholder="Diagnostic médical..."
+                                value={diagnosis}
+                                onChange={(e) => setDiagnosis(e.target.value)}
+                            />
+                            <div className="mt-3 flex justify-end">
                                 <button 
                                     onClick={handleGeneratePrescription}
-                                    className="bg-medical-50 text-medical-700 px-3 py-2 rounded-lg hover:bg-medical-100 transition"
+                                    className="text-xs bg-medical-50 text-medical-700 px-3 py-1.5 rounded-lg hover:bg-medical-100 transition flex items-center gap-2 font-bold"
                                     title="Suggérer ordonnance"
                                 >
-                                    <Pill size={18} />
+                                    <Pill size={14} /> Suggérer Ordonnance
                                 </button>
                             </div>
                         </div>
@@ -347,7 +342,7 @@ export const ConsultationManager: React.FC = () => {
                                     key={consult.id} 
                                     className={`relative bg-white p-5 rounded-2xl border transition-all duration-300 group ${selectedIds.includes(consult.id) ? 'border-medical-500 shadow-xl ring-2 ring-medical-500/10' : 'border-slate-200 shadow-sm hover:border-slate-300'}`}
                                 >
-                                    {/* Select Checkbox (Always Visible & Interactive) */}
+                                    {/* Select Checkbox */}
                                     <button 
                                       type="button"
                                       onClick={(e) => { e.stopPropagation(); handleToggleSelect(consult.id); }}
@@ -368,7 +363,7 @@ export const ConsultationManager: React.FC = () => {
                                             <button 
                                               type="button"
                                               onClick={(e) => { e.stopPropagation(); handleDeleteConsultation(consult.id); }}
-                                              className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 rounded-xl transition-all border border-rose-100 hover:border-rose-600 shadow-sm bg-rose-50/30 cursor-pointer"
+                                              className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 bg-white border border-rose-100 rounded-xl transition-all shadow-sm flex items-center justify-center cursor-pointer"
                                               title="Supprimer cette consultation"
                                             >
                                               <Trash2 size={20} />
@@ -376,8 +371,9 @@ export const ConsultationManager: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="mb-3 pl-12">
-                                        <p className="text-sm text-slate-800 font-black mb-1">Diagnostic: <span className="text-medical-600 uppercase tracking-tight">{consult.diagnosis}</span></p>
-                                        <p className="text-xs text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg italic">"{consult.symptoms}"</p>
+                                        <p className="text-sm text-slate-800 font-black mb-1">Diagnostic(s):</p>
+                                        <p className="text-xs text-indigo-700 font-bold bg-indigo-50 p-2 rounded-lg border border-indigo-100 mb-2 whitespace-pre-wrap">{consult.diagnosis}</p>
+                                        <p className="text-xs text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg italic whitespace-pre-wrap">"{consult.symptoms}"</p>
                                     </div>
                                     <div className="bg-slate-900/5 p-4 rounded-xl text-xs text-slate-600 ml-12 border border-slate-100">
                                         <div className="font-black mb-2 text-slate-400 uppercase tracking-[0.2em] text-[9px] flex items-center gap-2"><Pill size={12}/> Traitement prescrit</div>
