@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Patient } from '../types';
 import { AppLogo } from './common/AppLogo';
@@ -30,7 +29,6 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
 
             <div className="flex flex-col items-center justify-center h-full">
                 <AppLogo size={45} className="mb-1" />
-                <p className="text-[7px] font-mono text-slate-500 font-bold uppercase tracking-widest bg-slate-50 px-1 rounded">INPE: 041001769</p>
             </div>
 
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
@@ -109,7 +107,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
 
             <div className="mt-2 pt-2 border-t border-slate-100 text-center text-[7px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                ICE: 003677364000081 • CMHE Ait Melloul
+                CMHE Ait Melloul
             </div>
         </div>
     </div>

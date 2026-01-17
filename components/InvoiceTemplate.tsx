@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { Patient, Invoice } from '../types';
 import { Activity } from 'lucide-react';
-// Fix: Use LOGO_URL as it is the correctly exported member from constants.ts
 import { LOGO_URL } from '../constants';
 
 interface InvoiceTemplateProps {
@@ -34,7 +32,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 <div className="w-10 h-10 flex items-center justify-center mb-1">
                     {!logoError ? (
                     <img 
-                        // Fix: use LOGO_URL instead of LOGO_SVG
                         src={LOGO_URL} 
                         alt="Logo CMHE" 
                         className="max-h-full max-w-full object-contain"
@@ -44,7 +41,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                     <Activity size={24} className="text-slate-200" />
                     )}
                 </div>
-                <p className="text-[7px] font-mono text-slate-500 font-bold uppercase tracking-tighter">INPE: 041001769</p>
             </div>
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
@@ -155,7 +151,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             
             <div className="text-center mt-3">
                 <span className="bg-slate-50 text-slate-400 text-[6px] px-4 py-1 rounded-full font-black uppercase tracking-[0.2em] border border-slate-100">
-                    ICE: 003677364000081 • Contact: cmhe25@gmail.com
+                    Contact: cmhe25@gmail.com
                 </span>
             </div>
         </div>
