@@ -1,19 +1,19 @@
-
 import React, { useState } from 'react';
-import { Lock, Mail, ChevronRight, AlertCircle, Activity } from 'lucide-react';
+import { Lock, Mail, ChevronRight, AlertCircle } from 'lucide-react';
 import { AuthService } from '../services/authService';
 import { User } from '../types';
+import { AppLogo } from './common/AppLogo';
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
+  onBack?: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [logoError, setLogoError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,59 +32,88 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-        <div className="bg-medical-600 p-12 flex flex-col justify-between text-white md:w-5/12">
-          <div>
-            <div className="mb-8 flex justify-center md:justify-start">
-              <div className="bg-white p-4 rounded-2xl shadow-lg inline-flex items-center justify-center min-w-[80px] min-h-[80px]">
-                {!logoError ? (
-                  <img src="/logo.png" alt="Logo Cabinet" className="w-20 h-20 object-contain" onError={() => setLogoError(true)} />
-                ) : (
-                  <Activity size={48} className="text-medical-600" />
-                )}
-              </div>
+      {/* Correction md:row -> md:flex-row */}
+      <div className="max-w-4xl w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-100 min-h-[600px]">
+        
+        {/* Left Side - Brand */}
+        <div className="bg-medical-900 p-12 flex flex-col justify-between text-white md:w-5/12 relative overflow-hidden shrink-0">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-medical-500/10 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+          <div className="relative z-10">
+            <div className="mb-12">
+               <AppLogo size={80} className="shadow-2xl shadow-black/20 rounded-[2rem]" />
             </div>
-            <h1 className="text-3xl font-bold mb-2">CMHE Manager</h1>
-            <p className="text-medical-100">Système de gestion médicale sécurisé et intelligent.</p>
+            <h1 className="text-4xl font-black mb-4 tracking-tighter leading-tight">CMHE<br/>Manager Pro</h1>
+            <p className="text-medical-200 font-medium leading-relaxed">Solution de gestion intelligente pour le cabinet du Dr. Hasnaa El Malki.</p>
           </div>
-          <div className="mt-8 text-sm text-medical-200">&copy; {new Date().getFullYear()} Cabinet Médical</div>
+          <div className="mt-8 text-[10px] font-black uppercase tracking-[0.2em] text-medical-400 relative z-10">
+            Ait Melloul • Version 2025
+          </div>
         </div>
 
-        <div className="p-8 md:p-12 md:w-7/12 flex flex-col justify-center">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800">Connexion</h2>
-            <p className="text-slate-500 mt-1">Accédez à votre espace de travail sécurisé</p>
+        {/* Right Side - Form */}
+        <div className="p-8 md:p-16 flex-1 flex flex-col justify-center bg-white">
+          <div className="mb-10">
+            <h2 className="text-3xl font-black text-slate-800 tracking-tight">Espace Professionnel</h2>
+            <p className="text-slate-400 mt-2 font-medium text-sm">Veuillez vous identifier pour accéder au logiciel.</p>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-5">
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2 border border-red-100">
-                <AlertCircle size={16} /> {error}
+              <div className="bg-rose-50 text-rose-600 p-4 rounded-2xl text-xs font-bold flex items-center gap-3 border border-rose-100 animate-fade-in">
+                <AlertCircle size={18} />
+                {error}
               </div>
             )}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email professionnel</label>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email professionnel</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                <input type="email" required className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-medical-500 outline-none transition" placeholder="nom@cmhe.ma" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                <input 
+                  type="email" 
+                  required
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-medical-500 focus:bg-white outline-none transition-all font-bold text-slate-700"
+                  placeholder="nom@cmhe.ma"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                <input type="password" required className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-medical-500 outline-none transition" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                <input 
+                  type="password" 
+                  required
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-medical-500 focus:bg-white outline-none transition-all font-bold text-slate-700"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
             </div>
-            <button type="submit" disabled={isLoading} className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition flex items-center justify-center gap-2 mt-4 disabled:opacity-70">
-              {isLoading ? 'Connexion...' : 'Se connecter'}
+
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-70 shadow-xl shadow-slate-200"
+            >
+              {isLoading ? 'Authentification...' : 'Accéder au cabinet'}
               {!isLoading && <ChevronRight size={18} />}
             </button>
+            
+            {onBack && (
+              <button 
+                type="button"
+                onClick={onBack}
+                className="w-full text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-slate-600 transition mt-4"
+              >
+                Retour à l'accueil
+              </button>
+            )}
           </form>
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
-             <p>Comptes de test:</p>
-             <p>Admin: admin@cmhe.ma / admin123</p>
-             <p>Secrétaire: secretaire@cmhe.ma / sec123</p>
-          </div>
         </div>
       </div>
     </div>

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Patient, Invoice } from '../types';
 import { Activity } from 'lucide-react';
+// Fix: Use LOGO_URL as it is the correctly exported member from constants.ts
+import { LOGO_URL } from '../constants';
 
 interface InvoiceTemplateProps {
   patient?: Patient;
@@ -12,16 +14,13 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
   const total = invoice.items.reduce((sum, item) => sum + item.price, 0);
   const [logoError, setLogoError] = useState(false);
 
-  // URL pour le code QR
   const qrData = encodeURIComponent(`Facture N°${invoice.id.slice(-6).toUpperCase()} - Dr. Hasnaa El Malki`);
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=0c4a6e`;
 
   return (
     <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
         
-        {/* Header - Professionnel avec Suivi de Grossesse */}
         <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
-            {/* Colonne Gauche: Français */}
             <div className="text-left flex flex-col justify-center h-full">
                 <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
                 <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
@@ -31,13 +30,13 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                     <p className="font-bold text-slate-800 uppercase tracking-tighter">Suivi de Grossesse</p>
                 </div>
             </div>
-            {/* Colonne Centre: Logo */}
             <div className="flex flex-col items-center justify-center h-full">
                 <div className="w-10 h-10 flex items-center justify-center mb-1">
                     {!logoError ? (
                     <img 
-                        src="/logo.png" 
-                        alt="Logo Cabinet" 
+                        // Fix: use LOGO_URL instead of LOGO_SVG
+                        src={LOGO_URL} 
+                        alt="Logo CMHE" 
                         className="max-h-full max-w-full object-contain"
                         onError={() => setLogoError(true)}
                     />
@@ -47,7 +46,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 </div>
                 <p className="text-[7px] font-mono text-slate-500 font-bold uppercase tracking-tighter">INPE: 041001769</p>
             </div>
-            {/* Colonne Droite: Arabe */}
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
                 <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
@@ -58,7 +56,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
-        {/* Invoice Meta */}
         <div className="flex justify-between items-center mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
             <div>
                 <h2 className="text-xl font-black text-slate-900 mb-0.5 tracking-tighter uppercase">Facture</h2>
@@ -80,7 +77,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
-        {/* Items Table */}
         <div className="flex-1 overflow-hidden px-1">
             <table className="w-full text-left mb-4">
                 <thead>
@@ -121,7 +117,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
-        {/* Footer with Bilingual Address and Centered French Contact */}
         <div className="mt-auto shrink-0 pt-3 border-t-2 border-slate-100">
             <div className="grid grid-cols-2 gap-6 mb-3 px-2">
                 <div className="flex items-center gap-4">
@@ -143,7 +138,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 </div>
             </div>
             
-            {/* Addresses (FR/AR) */}
             <div className="grid grid-cols-2 gap-6 text-[9.5px] text-slate-600 font-sans mb-1.5 px-2">
                 <div className="text-left border-l-2 border-medical-500 pl-3">
                     <p className="font-bold text-slate-800">Imm. Damou, 1er étage, Route de Biougra, Ait Melloul</p>
@@ -153,7 +147,6 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 </div>
             </div>
 
-            {/* Centered Phone (French only) */}
             <div className="text-center mb-2">
                 <p className="text-[9.5px] font-medium text-slate-700 font-sans">
                     Fixe: 05 28 24 11 19 | GSM: 06 41 23 83 44

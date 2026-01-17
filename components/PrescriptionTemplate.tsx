@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Patient } from '../types';
-import { Activity } from 'lucide-react';
+import { AppLogo } from './common/AppLogo';
 
 interface PrescriptionTemplateProps {
   patient?: Patient;
@@ -10,19 +10,13 @@ interface PrescriptionTemplateProps {
 }
 
 export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ patient, prescription, date }) => {
-  const [logoError, setLogoError] = useState(false);
-  
-  // URL pour le code QR (encodage des coordonnées du cabinet)
-  const qrData = encodeURIComponent("Dr. Hasnaa El Malki - Imm. Damou, 1er étage, Ait Melloul. Tél: 0528241119");
+  const qrData = encodeURIComponent("Dr. Hasnaa El Malki - CMHE Ait Melloul. Tél: 0528241119");
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=0c4a6e`;
 
   return (
     <div className="h-[210mm] w-[148mm] mx-auto bg-white p-6 flex flex-col font-serif text-slate-900 leading-tight overflow-hidden relative border border-slate-100 box-border" style={{ pageBreakInside: 'avoid' }}>
         
-        {/* Header - Professionnel avec Suivi de Grossesse */}
         <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
-            
-            {/* Colonne Gauche: Français */}
             <div className="text-left flex flex-col justify-center h-full">
                 <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
                 <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
@@ -34,24 +28,11 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
                 </div>
             </div>
 
-            {/* Colonne Centre: Logo & INPE */}
             <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-10 h-10 flex items-center justify-center mb-1">
-                    {!logoError ? (
-                    <img 
-                        src="/logo.png" 
-                        alt="Logo Cabinet" 
-                        className="max-h-full max-w-full object-contain"
-                        onError={() => setLogoError(true)}
-                    />
-                    ) : (
-                    <Activity size={24} className="text-slate-200" />
-                    )}
-                </div>
+                <AppLogo size={45} className="mb-1" />
                 <p className="text-[7px] font-mono text-slate-500 font-bold uppercase tracking-widest bg-slate-50 px-1 rounded">INPE: 041001769</p>
             </div>
 
-            {/* Colonne Droite: Arabe */}
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
                 <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
@@ -64,7 +45,6 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
-        {/* Patient Info */}
         <div className="mb-4 px-1 shrink-0">
             <div className="flex justify-between items-end border-b border-dotted border-slate-300 pb-2">
                 <div className="flex items-baseline gap-2">
@@ -81,7 +61,6 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
-        {/* Prescription Content */}
         <div className="flex-1 px-3 py-2 overflow-hidden">
             <h2 className="text-center font-black text-lg uppercase underline decoration-2 underline-offset-[6px] mb-6 tracking-[0.4em] text-slate-800">Ordonnance</h2>
             <div className="max-h-[105mm] overflow-hidden">
@@ -103,20 +82,17 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="mt-auto shrink-0 pt-3 border-t-2 border-slate-100">
             <div className="flex justify-between items-center mb-4 px-4">
                 <div className="text-center border-2 border-slate-50 px-6 py-2 rounded-2xl bg-slate-50/30 flex-1 mr-4">
                     <p className="font-black text-slate-300 uppercase tracking-[0.3em] text-[7px]">Signature et Cachet</p>
                     <div className="h-10"></div>
                 </div>
-                {/* Code QR Section */}
                 <div className="w-14 h-14 bg-white p-1 border border-slate-200 rounded-lg shadow-sm">
                     <img src={qrUrl} alt="QR Code" className="w-full h-full object-contain" />
                 </div>
             </div>
             
-            {/* Addresses Footer */}
             <div className="grid grid-cols-2 gap-6 text-[9.5px] text-slate-600 font-sans mb-1.5">
                 <div className="text-left border-l-2 border-medical-500 pl-3">
                     <p className="font-bold text-slate-800">Imm. Damou, 1er étage, Route de Biougra, Ait Melloul</p>
@@ -126,7 +102,6 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
                 </div>
             </div>
 
-            {/* Centered Phone (French only as requested) */}
             <div className="text-center mb-1">
                 <p className="text-[9.5px] font-medium text-slate-700 font-sans">
                     Tél: 05 28 24 11 19 | GSM: 06 41 23 83 44
@@ -134,7 +109,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
 
             <div className="mt-2 pt-2 border-t border-slate-100 text-center text-[7px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                ICE: 003677364000081 • Email: cmhe25@gmail.com
+                ICE: 003677364000081 • CMHE Ait Melloul
             </div>
         </div>
     </div>
