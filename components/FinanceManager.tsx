@@ -57,7 +57,7 @@ export const FinanceManager: React.FC = () => {
       setExpenses(exp);
       setInvoices(inv);
       setPatients(pat);
-      setSelectedIds([]); // On vide la sélection à chaque rechargement
+      setSelectedIds([]);
     } finally {
       setIsRefreshing(false);
     }
@@ -238,7 +238,6 @@ export const FinanceManager: React.FC = () => {
           <div className="space-y-4 animate-fade-in">
              <div className="flex justify-between items-center bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-2">Liste des {activeTab === 'revenues' ? 'Recettes' : 'Dépenses'}</p>
-                {/* Fix: Avoid testing 'void' (setter return value) for truthiness by using a block for the onClick handler */}
                 <button onClick={() => { setImportType(activeTab === 'revenues' ? 'REVENUE' : 'EXPENSE'); setIsImportModalOpen(true); }} className="bg-slate-800 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-bold hover:bg-black transition-all"><Upload size={14}/> Importer Excel</button>
              </div>
              <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
@@ -321,8 +320,7 @@ const FinanceImportModal = ({ type, onClose, onImported, patients }: { type: 'EX
         const date = new Date((val - 25569) * 86400 * 1000);
         return date.toISOString().split('T')[0];
     }
-    // Format JJ/MM/AAAA ou JJ-MM-AAAA
-    if (typeof val === 'string') {
+    if (typeof val === 'string' && val.trim().length > 0) {
         const parts = val.split(/[\/\-\.]/);
         if (parts.length === 3) {
             let d, m, y;

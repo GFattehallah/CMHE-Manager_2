@@ -3,11 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   User as UserType, Shield, Phone, Mail, MapPin, Calendar, Activity, 
   AlertCircle, FileText, Pill, CreditCard, ChevronLeft, 
-  Clock, Heart, Scale, Thermometer, ExternalLink, Hash, Trash2, Loader2
+  Clock, Heart, Scale, Ruler, ExternalLink, Hash, Trash2, Loader2, Info, Printer, Download
 } from 'lucide-react';
 import { DataService } from '../services/dataService';
 import { AuthService } from '../services/authService';
 import { Permission, Consultation, Invoice, Appointment, Patient } from '../types';
+import { DMPTemplate } from './DMPTemplate';
 
 export const PatientDMP: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();
@@ -19,6 +20,8 @@ export const PatientDMP: React.FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const loadData = async () => {
     const [pats, cons, invs, apts] = await Promise.all([
@@ -54,6 +57,62 @@ export const PatientDMP: React.FC = () => {
     }
   };
 
+  const handlePrint = () => {
+    setIsPrinting(true);
+    // On force un cycle de rendu pour être sûr que le print-only est peuplé
+    setTimeout(() => {
+        window.print();
+        setIsPrinting(false);
+    }, 300);
+  };
+
+  const handleDownloadPDF = () => {
+    if (!patient) return;
+    setIsDownloading(true);
+    
+    // On cible le conteneur du template
+    const element = document.getElementById('dmp-render-container');
+    if (!element) {
+        alert("Erreur: Template non trouvé.");
+        setIsDownloading(false);
+        return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: `DMP_${patient.lastName.toUpperCase()}_${patient.firstName}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Utilisation de html2pdf
+    (window as any).html2pdf().set(opt).from(element).save().then(() => {
+        setIsDownloading(false);
+    }).catch((err: any) => {
+        console.error(err);
+        setIsDownloading(false);
+        alert("Erreur lors de la génération du PDF.");
+    });
+  };
+
+  const calculateIMC = () => {
+    if (!patient?.weight || !patient?.height) return null;
+    const w = parseFloat(patient.weight);
+    const h = parseFloat(patient.height) / 100;
+    if (isNaN(w) || isNaN(h) || h === 0) return null;
+    return (w / (h * h)).toFixed(1);
+  };
+
+  const imcValue = calculateIMC();
+  const getIMCStatus = (imc: string) => {
+    const val = parseFloat(imc);
+    if (val < 18.5) return { label: 'Maigreur', color: 'text-blue-400' };
+    if (val < 25) return { label: 'Normal', color: 'text-emerald-400' };
+    if (val < 30) return { label: 'Surpoids', color: 'text-orange-400' };
+    return { label: 'Obésité', color: 'text-rose-400' };
+  };
+
   if (!patient) {
     return (
       <div className="p-12 text-center">
@@ -81,9 +140,25 @@ export const PatientDMP: React.FC = () => {
         </button>
         <div className="flex gap-2">
            {isDeleting && <Loader2 size={16} className="animate-spin text-medical-600" />}
-           <button onClick={() => window.print()} className="bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-600 font-bold flex items-center gap-2 hover:bg-slate-50 transition">
+           
+           <button 
+              onClick={handleDownloadPDF} 
+              disabled={isDownloading}
+              className="bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-600 font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+            >
+             {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+             Télécharger Dossier
+           </button>
+
+           <button 
+              onClick={handlePrint} 
+              disabled={isPrinting}
+              className="bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-600 font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+            >
+             {isPrinting ? <Loader2 size={18} className="animate-spin" /> : <Printer size={18} />}
              Imprimer Dossier
            </button>
+
            {canSeeMedical && (
              <button 
                onClick={() => navigate('/consultations')} 
@@ -95,7 +170,7 @@ export const PatientDMP: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 no-print">
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm text-center">
             <div className="w-24 h-24 bg-medical-50 text-medical-600 rounded-full flex items-center justify-center text-3xl font-black mx-auto mb-4 border-4 border-white shadow-md">
@@ -142,6 +217,33 @@ export const PatientDMP: React.FC = () => {
             
             <div className="space-y-6">
                <section>
+                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Biométrie & IMC</p>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
+                       <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><Scale size={10}/> Poids</p>
+                       <p className="text-sm font-black text-slate-100">{patient.weight ? `${patient.weight} kg` : '--'}</p>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
+                       <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><Ruler size={10}/> Taille</p>
+                       <p className="text-sm font-black text-slate-100">{patient.height ? `${patient.height} cm` : '--'}</p>
+                    </div>
+                 </div>
+                 {imcValue && (
+                   <div className="mt-3 bg-white/5 p-4 rounded-2xl border border-white/10 flex justify-between items-center">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">IMC (Indice de Masse Corp.)</p>
+                        <p className="text-2xl font-black text-white">{imcValue}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-[10px] font-black uppercase tracking-widest ${getIMCStatus(imcValue).color}`}>
+                           {getIMCStatus(imcValue).label}
+                        </p>
+                      </div>
+                   </div>
+                 )}
+               </section>
+
+               <section>
                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Allergies</p>
                  <div className="flex flex-wrap gap-2">
                    {patient.allergies.length > 0 ? patient.allergies.map(a => (
@@ -164,15 +266,9 @@ export const PatientDMP: React.FC = () => {
                  </ul>
                </section>
 
-               <div className="pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Groupe Sanguin</p>
-                    <p className="text-lg font-black text-medical-400">{patient.bloodType || '--'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Dernier Poids</p>
-                    <p className="text-lg font-black text-slate-200">{patient.weight || '--'} kg</p>
-                  </div>
+               <div className="pt-6 border-t border-white/10">
+                  <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Groupe Sanguin</p>
+                  <p className="text-lg font-black text-medical-400">{patient.bloodType || '--'}</p>
                </div>
             </div>
           </div>
@@ -213,7 +309,7 @@ export const PatientDMP: React.FC = () => {
                </span>
             </div>
 
-            <div className="p-8 space-y-8 max-h-[700px] overflow-y-auto">
+            <div className="p-8 space-y-8 max-h-[700px] overflow-y-auto custom-scrollbar">
                {consultations.length === 0 && appointments.length === 0 ? (
                  <div className="text-center py-20 text-slate-400">
                     <Calendar size={48} className="mx-auto mb-4 opacity-10" />
@@ -231,7 +327,6 @@ export const PatientDMP: React.FC = () => {
                                <div>
                                   <span className="text-[9px] font-black uppercase text-medical-600 bg-medical-50 px-2 py-1 rounded-lg">Consultation</span>
                                   <div className="mt-2">
-                                     {/* Utilisation de whitespace-pre-wrap pour respecter les sauts de ligne */}
                                      <div className="text-[10px] font-black bg-indigo-50 text-indigo-700 px-3 py-2 rounded-xl border border-indigo-100 uppercase whitespace-pre-wrap leading-relaxed">
                                          {c.diagnosis}
                                      </div>
@@ -303,6 +398,13 @@ export const PatientDMP: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Hidden Print/PDF Container with specific ID */}
+      <div className="print-only">
+         <div id="dmp-render-container">
+            {patient && <DMPTemplate patient={patient} consultations={consultations} />}
+         </div>
       </div>
     </div>
   );

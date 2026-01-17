@@ -1,4 +1,3 @@
-//test2//
 import React, { useState, useEffect } from 'react';
 import { 
   UserPlus, Shield, Mail, Trash2, Edit2, CheckCircle2, 
@@ -19,7 +18,6 @@ const PERMISSION_LABELS: Record<Permission, string> = {
   [Permission.FINANCE]: 'Trésorerie & Finance',
   [Permission.USERS]: 'Gestion Utilisateurs',
   [Permission.STATS]: 'Voir Totaux & Chiffres (CA, Impayés)',
-  // Fix: Added missing label for DMP_VIEW permission
   [Permission.DMP_VIEW]: 'Accès Dossier Médical Partagé (DMP)'
 };
 
@@ -29,7 +27,6 @@ export const AccountManager: React.FC = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Fix: useEffect callback must handle DataService.getUsers() Promise
     const loadUsers = async () => {
       const data = await DataService.getUsers();
       setUsers(data);
@@ -41,20 +38,21 @@ export const AccountManager: React.FC = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
-    // Collect permissions from checkboxes
     const selectedPermissions: Permission[] = [];
     Object.values(Permission).forEach(p => {
         if (formData.get(`perm_${p}`)) selectedPermissions.push(p);
     });
 
+    const name = (formData.get('name') as string) || "Utilisateur";
+
     const newUser: User = {
       id: editingUser ? editingUser.id : `U-${Date.now()}`,
-      name: formData.get('name') as string,
+      name: name,
       email: formData.get('email') as string,
       password: formData.get('password') as string || editingUser?.password || '123456',
       role: formData.get('role') as Role,
       permissions: selectedPermissions,
-      avatar: (formData.get('name') as string).split(' ').map(n => n[0]).join('').toUpperCase()
+      avatar: name.split(' ').map(n => n[0]).filter(Boolean).join('').toUpperCase() || "?"
     };
 
     await DataService.saveUser(newUser);

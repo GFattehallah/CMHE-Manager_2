@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, FileText, UserCircle, Loader2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, FileText, UserCircle, Loader2, Scale, Ruler } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DataService } from '../services/dataService';
 import { Patient } from '../types';
@@ -20,7 +19,7 @@ export const PatientManager: React.FC = () => {
   const loadPatients = async () => {
     setIsLoading(true);
     const data = await DataService.getPatients();
-    setPatients([...data]); // Force a new array reference
+    setPatients([...data]);
     setIsLoading(false);
   };
 
@@ -28,6 +27,9 @@ export const PatientManager: React.FC = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const medicalHistoryRaw = (formData.get('medicalHistory') as string) ?? "";
+    const allergiesRaw = (formData.get('allergies') as string) ?? "";
+
     const newPatient: Patient = {
       id: editingPatient ? editingPatient.id : `P-${Date.now()}`,
       firstName: formData.get('firstName') as string,
@@ -39,15 +41,14 @@ export const PatientManager: React.FC = () => {
       insuranceType: formData.get('insuranceType') as any,
       insuranceNumber: formData.get('insuranceNumber') as string,
       address: formData.get('address') as string,
-      medicalHistory: (formData.get('medicalHistory') as string).split(',').map(s => s.trim()).filter(s => s),
-      allergies: (formData.get('allergies') as string).split(',').map(s => s.trim()).filter(s => s),
+      medicalHistory: medicalHistoryRaw.split(',').map(s => s.trim()).filter(s => s),
+      allergies: allergiesRaw.split(',').map(s => s.trim()).filter(s => s),
       bloodType: formData.get('bloodType') as any,
       weight: formData.get('weight') as string,
       height: formData.get('height') as string,
       createdAt: editingPatient ? editingPatient.createdAt : new Date().toISOString()
     };
 
-    // Mise à jour de l'état local AVANT de fermer la modale pour un feedback visuel immédiat
     setPatients(prev => {
       const idx = prev.findIndex(p => p.id === newPatient.id);
       if (idx >= 0) {
@@ -62,7 +63,6 @@ export const PatientManager: React.FC = () => {
     setIsModalOpen(false);
     setEditingPatient(null);
     
-    // Rafraîchissement final pour s'assurer de la cohérence
     setTimeout(() => loadPatients(), 500);
   };
 
@@ -119,6 +119,7 @@ export const PatientManager: React.FC = () => {
                 <th className="p-5 pl-8">Patient</th>
                 <th className="p-5">Identité</th>
                 <th className="p-5">Contact</th>
+                <th className="p-5 text-center">Biométrie</th>
                 <th className="p-5">Couverture</th>
                 <th className="p-5 text-right pr-8">Actions</th>
               </tr>
@@ -145,6 +146,12 @@ export const PatientManager: React.FC = () => {
                   <td className="p-5">
                     <div className="text-xs font-bold text-slate-700">{patient.phone}</div>
                     <div className="text-[10px] text-slate-400 font-medium">{patient.email}</div>
+                  </td>
+                  <td className="p-5 text-center">
+                    <div className="flex flex-col items-center">
+                       <span className="text-[10px] font-black text-slate-700">{patient.weight ? `${patient.weight}kg` : '--'}</span>
+                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{patient.height ? `${patient.height}cm` : '--'}</span>
+                    </div>
                   </td>
                   <td className="p-5">
                     <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase ${
@@ -180,22 +187,11 @@ export const PatientManager: React.FC = () => {
                   </td>
                 </tr>
               ))}
-              {filteredPatients.length === 0 && !isLoading && (
-                <tr>
-                  <td colSpan={5} className="p-20 text-center flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-4">
-                      <Search size={40} className="text-slate-200" />
-                    </div>
-                    <p className="text-slate-400 font-black uppercase tracking-widest text-xs">Aucun patient trouvé</p>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in">
@@ -206,7 +202,7 @@ export const PatientManager: React.FC = () => {
               <button onClick={() => setIsModalOpen(false)} className="text-3xl font-light hover:rotate-90 transition-transform">&times;</button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 space-y-5 overflow-y-auto">
+            <form onSubmit={handleSave} className="p-8 space-y-5 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Prénom</label>
@@ -228,11 +224,40 @@ export const PatientManager: React.FC = () => {
                   <input name="cin" defaultValue={editingPatient?.cin} required className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Sang</label>
-                  <select name="bloodType" defaultValue={editingPatient?.bloodType} className="w-full p-3 border border-slate-200 rounded-xl text-xs font-bold">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Groupe Sang.</label>
+                  <select name="bloodType" defaultValue={editingPatient?.bloodType} className="w-full p-3 border border-slate-200 rounded-xl text-xs font-bold bg-white">
                     <option value="">--</option>
                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
+                </div>
+              </div>
+
+              {/* CHAMPS BIOMÉTRIQUES AJOUTÉS ICI */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                    <Scale size={12} className="text-medical-500"/> Poids (kg)
+                  </label>
+                  <input 
+                    type="number" 
+                    step="0.1" 
+                    name="weight" 
+                    defaultValue={editingPatient?.weight} 
+                    placeholder="ex: 75.5"
+                    className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" 
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                    <Ruler size={12} className="text-medical-500"/> Taille (cm)
+                  </label>
+                  <input 
+                    type="number" 
+                    name="height" 
+                    defaultValue={editingPatient?.height} 
+                    placeholder="ex: 175"
+                    className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" 
+                  />
                 </div>
               </div>
 
@@ -250,7 +275,7 @@ export const PatientManager: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Assurance</label>
-                  <select name="insuranceType" defaultValue={editingPatient?.insuranceType || 'AUCUNE'} className="w-full p-3 border border-slate-200 rounded-xl text-xs font-black uppercase">
+                  <select name="insuranceType" defaultValue={editingPatient?.insuranceType || 'AUCUNE'} className="w-full p-3 border border-slate-200 rounded-xl text-xs font-black uppercase bg-white">
                     <option value="CNSS">CNSS</option>
                     <option value="CNOPS">CNOPS</option>
                     <option value="PRIVEE">Privée</option>
@@ -266,6 +291,16 @@ export const PatientManager: React.FC = () => {
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Adresse</label>
                 <input name="address" defaultValue={editingPatient?.address} className="w-full p-3 border border-slate-200 rounded-xl font-medium outline-none" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Antécédents (séparés par des virgules)</label>
+                <textarea name="medicalHistory" defaultValue={editingPatient?.medicalHistory?.join(', ')} className="w-full p-3 border border-slate-200 rounded-xl text-sm font-medium outline-none h-20 resize-none" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Allergies (séparées par des virgules)</label>
+                <textarea name="allergies" defaultValue={editingPatient?.allergies?.join(', ')} className="w-full p-3 border border-slate-200 rounded-xl text-sm font-medium outline-none h-20 resize-none" />
               </div>
 
               <div className="pt-6 flex gap-3">

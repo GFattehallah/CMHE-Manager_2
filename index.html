@@ -39,13 +39,15 @@
     </script>
     <style>
       @media print {
-        @page { size: A5 portrait; margin: 0; }
+        @page { size: A4 portrait; margin: 0; }
+        body { background: white !important; }
         .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        #root { display: none; }
+        .print-only { display: block !important; width: 210mm !important; }
+        #root > *:not(.print-only) { display: none !important; }
+        #root { display: block !important; height: auto !important; overflow: visible !important; }
       }
       .print-only { display: none; }
-      .pdf-container { position: fixed; left: -9999px; top: 0; width: 148mm; height: 210mm; background: white; z-index: -1; }
+      .pdf-container { position: fixed; left: -9999px; top: 0; width: 210mm; background: white; z-index: -1; }
       @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       .custom-scrollbar::-webkit-scrollbar { width: 4px; }
