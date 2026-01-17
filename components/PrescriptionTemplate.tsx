@@ -112,7 +112,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
                     Fixe: 05 28 24 11 19 | GSM: 06 41 23 83 44
                 </p>
                 <p className="text-[8px] font-bold text-slate-400 font-sans mt-0.5 uppercase tracking-wider">
-                    Email: cmhe25@gmail.com
+                    Email: chme25@gmail.com
                 </p>
             </div>
 

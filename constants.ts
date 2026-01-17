@@ -2,8 +2,7 @@ import { Patient, Appointment, AppointmentStatus, Invoice, PaymentType, Expense,
 
 /**
  * LOGO DU CABINET
- * Le composant AppLogo utilise un SVG de secours haute fidélité
- * si ce fichier n'est pas trouvé.
+ * Utilisation du fichier logo.png à la racine du projet.
  */
 export const LOGO_URL = "logo.png";
 
