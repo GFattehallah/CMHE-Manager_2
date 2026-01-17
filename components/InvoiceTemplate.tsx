@@ -18,6 +18,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
   return (
     <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
         
+        {/* Header with Professional Info */}
         <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
             <div className="text-left flex flex-col justify-center h-full">
                 <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
@@ -52,6 +53,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
+        {/* Invoice Summary Box */}
         <div className="flex justify-between items-center mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
             <div>
                 <h2 className="text-xl font-black text-slate-900 mb-0.5 tracking-tighter uppercase">Facture</h2>
@@ -73,6 +75,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
+        {/* Items Table */}
         <div className="flex-1 overflow-hidden px-1">
             <table className="w-full text-left mb-4">
                 <thead>
@@ -113,6 +116,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
         </div>
 
+        {/* Bottom Contact & Address Section */}
         <div className="mt-auto shrink-0 pt-3 border-t-2 border-slate-100">
             <div className="grid grid-cols-2 gap-6 mb-3 px-2">
                 <div className="flex items-center gap-4">

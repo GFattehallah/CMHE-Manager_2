@@ -15,7 +15,9 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
   return (
     <div className="h-[210mm] w-[148mm] mx-auto bg-white p-6 flex flex-col font-serif text-slate-900 leading-tight overflow-hidden relative border border-slate-100 box-border" style={{ pageBreakInside: 'avoid' }}>
         
+        {/* Header Section */}
         <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
+            {/* Infos Médecin FR */}
             <div className="text-left flex flex-col justify-center h-full">
                 <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
                 <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
@@ -27,10 +29,12 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
                 </div>
             </div>
 
+            {/* Logo Central */}
             <div className="flex flex-col items-center justify-center h-full">
                 <AppLogo size={45} className="mb-1" />
             </div>
 
+            {/* Infos Médecin AR */}
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
                 <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
@@ -43,6 +47,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
+        {/* Patient Info Section */}
         <div className="mb-4 px-1 shrink-0">
             <div className="flex justify-between items-end border-b border-dotted border-slate-300 pb-2">
                 <div className="flex items-baseline gap-2">
@@ -59,6 +64,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
+        {/* Prescription Content Area */}
         <div className="flex-1 px-3 py-2 overflow-hidden">
             <h2 className="text-center font-black text-lg uppercase underline decoration-2 underline-offset-[6px] mb-6 tracking-[0.4em] text-slate-800">Ordonnance</h2>
             <div className="max-h-[105mm] overflow-hidden">
@@ -80,6 +86,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
             </div>
         </div>
 
+        {/* Footer Section */}
         <div className="mt-auto shrink-0 pt-3 border-t-2 border-slate-100">
             <div className="flex justify-between items-center mb-4 px-4">
                 <div className="text-center border-2 border-slate-50 px-6 py-2 rounded-2xl bg-slate-50/30 flex-1 mr-4">
