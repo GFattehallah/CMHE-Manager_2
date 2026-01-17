@@ -59,41 +59,53 @@ export const PatientDMP: React.FC = () => {
 
   const handlePrint = () => {
     setIsPrinting(true);
-    // On force un cycle de rendu pour être sûr que le print-only est peuplé
+    // On force un cycle de rendu pour être sûr que le contenu d'impression est à jour
     setTimeout(() => {
         window.print();
         setIsPrinting(false);
-    }, 300);
+    }, 500);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!patient) return;
+    
+    // Vérifier si la bibliothèque est chargée
+    if (!(window as any).html2pdf) {
+      alert("La bibliothèque PDF n'est pas encore chargée. Veuillez patienter ou rafraîchir la page.");
+      return;
+    }
+
     setIsDownloading(true);
     
-    // On cible le conteneur du template
-    const element = document.getElementById('dmp-render-container');
+    // On cible le conteneur du template hors-écran
+    const element = document.getElementById('dmp-render-pdf-offscreen');
     if (!element) {
-        alert("Erreur: Template non trouvé.");
+        alert("Erreur technique : Template de rendu introuvable.");
         setIsDownloading(false);
         return;
     }
 
     const opt = {
-      margin: 10,
+      margin: 0,
       filename: `DMP_${patient.lastName.toUpperCase()}_${patient.firstName}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true, 
+        letterRendering: true,
+        logging: false
+      },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Utilisation de html2pdf
-    (window as any).html2pdf().set(opt).from(element).save().then(() => {
-        setIsDownloading(false);
-    }).catch((err: any) => {
-        console.error(err);
-        setIsDownloading(false);
-        alert("Erreur lors de la génération du PDF.");
-    });
+    try {
+      await (window as any).html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error("PDF Export Error:", err);
+      alert("Une erreur est survenue lors de la création du PDF.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const calculateIMC = () => {
@@ -400,11 +412,16 @@ export const PatientDMP: React.FC = () => {
         </div>
       </div>
 
-      {/* Hidden Print/PDF Container with specific ID */}
+      {/* Conteneur d'impression système (Standard) */}
       <div className="print-only">
-         <div id="dmp-render-container">
+         <div className="print-container">
             {patient && <DMPTemplate patient={patient} consultations={consultations} />}
          </div>
+      </div>
+
+      {/* Conteneur de rendu PDF (Hors-écran) */}
+      <div className="pdf-offscreen" id="dmp-render-pdf-offscreen">
+         {patient && <DMPTemplate patient={patient} consultations={consultations} />}
       </div>
     </div>
   );

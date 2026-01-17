@@ -39,15 +39,22 @@
     </script>
     <style>
       @media print {
-        @page { size: A4 portrait; margin: 0; }
-        body { background: white !important; }
+        @page { size: A4 portrait; margin: 10mm; }
         .no-print { display: none !important; }
-        .print-only { display: block !important; width: 210mm !important; }
+        .print-only { display: block !important; }
+        body > *:not(.print-container) { display: none !important; }
+        #root { display: block !important; }
         #root > *:not(.print-only) { display: none !important; }
-        #root { display: block !important; height: auto !important; overflow: visible !important; }
       }
       .print-only { display: none; }
-      .pdf-container { position: fixed; left: -9999px; top: 0; width: 210mm; background: white; z-index: -1; }
+      /* Classe critique pour html2pdf : l'élément doit être "visible" mais hors champ */
+      .pdf-offscreen {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        width: 210mm; /* Largeur A4 */
+        background: white;
+      }
       @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       .custom-scrollbar::-webkit-scrollbar { width: 4px; }
