@@ -7,6 +7,7 @@
     <link rel="icon" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Chargement sécurisé de html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
       window.process = { 
@@ -41,19 +42,24 @@
       @media print {
         @page { size: A4 portrait; margin: 10mm; }
         .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        body > *:not(.print-container) { display: none !important; }
-        #root { display: block !important; }
-        #root > *:not(.print-only) { display: none !important; }
+        .print-only { display: block !important; visibility: visible !important; position: static !important; }
+        body { background: white !important; }
+        /* Cacher tout sauf le conteneur d'impression */
+        #root { display: none !important; }
+        .print-container-wrapper { display: block !important; }
       }
       .print-only { display: none; }
-      /* Classe critique pour html2pdf : l'élément doit être "visible" mais hors champ */
-      .pdf-offscreen {
-        position: absolute;
+      .print-container-wrapper { display: none; }
+      
+      /* Conteneur pour html2pdf : doit être invisible pour l'œil mais présent dans le DOM pour la capture */
+      .pdf-offscreen-render {
+        position: fixed;
         left: -9999px;
         top: 0;
-        width: 210mm; /* Largeur A4 */
+        width: 210mm;
         background: white;
+        z-index: -1000;
+        visibility: visible;
       }
       @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -90,6 +96,8 @@
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased overflow-hidden">
     <div id="root"></div>
+    <!-- Conteneur d'impression global pour éviter les problèmes de parent caché -->
+    <div id="global-print-portal" class="print-container-wrapper"></div>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
