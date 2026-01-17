@@ -40,27 +40,26 @@
     </script>
     <style>
       @media print {
-        @page { size: A4 portrait; margin: 10mm; }
+        @page { size: A4 portrait; margin: 0; }
         .no-print { display: none !important; }
-        .print-only { display: block !important; visibility: visible !important; position: static !important; }
-        body { background: white !important; }
-        /* Cacher tout sauf le conteneur d'impression */
+        .print-only { display: block !important; width: 210mm !important; visibility: visible !important; }
         #root { display: none !important; }
-        .print-container-wrapper { display: block !important; }
+        #global-print-portal { display: block !important; position: static !important; }
       }
       .print-only { display: none; }
-      .print-container-wrapper { display: none; }
+      #global-print-portal { display: none; }
       
-      /* Conteneur pour html2pdf : doit être invisible pour l'œil mais présent dans le DOM pour la capture */
-      .pdf-offscreen-render {
-        position: fixed;
+      /* Conteneur pour html2pdf : doit être invisible mais présent pour la capture */
+      #dmp-pdf-render-area {
+        position: absolute;
         left: -9999px;
         top: 0;
         width: 210mm;
         background: white;
-        z-index: -1000;
         visibility: visible;
+        z-index: -1000;
       }
+
       @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -96,8 +95,9 @@
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased overflow-hidden">
     <div id="root"></div>
-    <!-- Conteneur d'impression global pour éviter les problèmes de parent caché -->
-    <div id="global-print-portal" class="print-container-wrapper"></div>
+    <div id="global-print-portal"></div>
+    <!-- Element dédié à la capture PDF -->
+    <div id="dmp-pdf-render-area"></div>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
