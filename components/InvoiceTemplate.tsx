@@ -154,7 +154,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
             </div>
             
             <div className="text-center mt-3">
-                <span className="bg-slate-50 text-slate-400 text-[6px] px-4 py-1 rounded-full font-black uppercase tracking-[0.2em] border border-slate-100">
+                <span className="bg-slate-50 text-slate-400 text-[7px] px-6 py-1.5 rounded-full font-black uppercase tracking-[0.2em] border border-slate-100 shadow-sm">
                     Contact: cmhe25@gmail.com
                 </span>
             </div>

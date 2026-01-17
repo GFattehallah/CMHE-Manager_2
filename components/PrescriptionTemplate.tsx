@@ -98,7 +98,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
                 </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-6 text-[9.5px] text-slate-600 font-sans mb-1.5">
+            <div className="grid grid-cols-2 gap-6 text-[9.5px] text-slate-600 font-sans mb-1.5 px-2">
                 <div className="text-left border-l-2 border-medical-500 pl-3">
                     <p className="font-bold text-slate-800">Imm. Damou, 1er étage, Route de Biougra, Ait Melloul</p>
                 </div>
@@ -109,11 +109,14 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
 
             <div className="text-center mb-1">
                 <p className="text-[9.5px] font-medium text-slate-700 font-sans">
-                    Tél: 05 28 24 11 19 | GSM: 06 41 23 83 44
+                    Fixe: 05 28 24 11 19 | GSM: 06 41 23 83 44
+                </p>
+                <p className="text-[8px] font-bold text-slate-400 font-sans mt-0.5 uppercase tracking-wider">
+                    Email: cmhe25@gmail.com
                 </p>
             </div>
 
-            <div className="mt-2 pt-2 border-t border-slate-100 text-center text-[7px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+            <div className="mt-1 pt-2 border-t border-slate-100 text-center text-[7px] text-slate-300 font-black uppercase tracking-[0.2em]">
                 CMHE Ait Melloul
             </div>
         </div>
