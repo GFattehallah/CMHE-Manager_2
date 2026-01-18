@@ -43,14 +43,14 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
       </div>
 
       {/* État Civil & Identité */}
-      <div className="grid grid-cols-2 gap-8 mb-8 bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
+      <div className="grid grid-cols-2 gap-8 mb-6 bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
         <div className="space-y-4">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">Identité</h3>
           <p className="text-2xl font-black text-slate-900 uppercase tracking-tight">{patient.lastName} {patient.firstName}</p>
           <div className="grid grid-cols-1 text-[11px] gap-y-2 font-bold text-slate-600">
             <p><span className="text-slate-400 uppercase font-black text-[9px] mr-2">Né(e) le:</span> {new Date(patient.birthDate).toLocaleDateString('fr-FR')}</p>
             <p><span className="text-slate-400 uppercase font-black text-[9px] mr-2">CIN:</span> {patient.cin}</p>
-            <p><span className="text-slate-400 uppercase font-black text-[9px] mr-2">Mutuelle:</span> {patient.insuranceType}</p>
+            <p><span className="text-slate-400 uppercase font-black text-[9px] mr-2">Mutuelle:</span> {patient.insuranceType} {patient.insuranceNumber ? `(N° ${patient.insuranceNumber})` : ''}</p>
           </div>
         </div>
         <div className="space-y-4">
@@ -64,7 +64,7 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
       </div>
 
       {/* Constantes Cliniques */}
-      <div className="grid grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-sm">
           <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Biométrie</p>
           <p className="text-lg font-black text-slate-800">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
@@ -76,6 +76,26 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
         <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-sm">
           <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Groupe Sanguin</p>
           <p className="text-lg font-black text-rose-600">{patient.bloodType || '--'}</p>
+        </div>
+      </div>
+
+      {/* PROFIL MÉDICAL (Antécédents & Allergies) */}
+      <div className="grid grid-cols-2 gap-6 mb-10">
+        <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100">
+           <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3 border-b border-blue-100 pb-2">Antécédents Médicaux</h3>
+           <p className="text-xs font-bold text-slate-700 leading-relaxed">
+             {patient.medicalHistory && patient.medicalHistory.length > 0 
+               ? patient.medicalHistory.join(', ') 
+               : 'Aucun antécédent majeur renseigné'}
+           </p>
+        </div>
+        <div className="p-6 bg-rose-50/50 rounded-3xl border border-rose-100">
+           <h3 className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-3 border-b border-rose-100 pb-2">Allergies & Intolérances</h3>
+           <p className="text-xs font-bold text-slate-700 leading-relaxed">
+             {patient.allergies && patient.allergies.length > 0 
+               ? patient.allergies.join(', ') 
+               : 'Aucune allergie connue'}
+           </p>
         </div>
       </div>
 
