@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom';
 import { 
   Shield, Phone, MapPin, Activity, AlertCircle, FileText, 
   Pill, ChevronLeft, Clock, Loader2, Info, 
   LayoutDashboard, History, Receipt, ArrowRight,
-  TrendingUp, CheckCircle2, Wallet, FileCode, Download
+  TrendingUp, CheckCircle2, Wallet, FileCode, Heart, Bookmark
 } from 'lucide-react';
 import { DataService } from '../services/dataService';
 import { AuthService } from '../services/authService';
@@ -142,26 +141,46 @@ export const PatientDMP: React.FC = () => {
                   </div>
                   <h2 className="text-xl font-black text-slate-800 uppercase tracking-tighter">{patient.lastName} {patient.firstName}</h2>
                   <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">CIN: {patient.cin}</p>
-                  <div className="mt-8 space-y-3 text-left">
+                  
+                  <div className="mt-6 space-y-3 text-left">
                      <div className="flex items-center gap-3 text-sm font-bold text-slate-600 bg-slate-50 p-3 rounded-xl"><Phone size={16} className="text-medical-500" /> {patient.phone}</div>
                      <div className="flex items-center gap-3 text-sm font-bold text-slate-600 bg-slate-50 p-3 rounded-xl"><MapPin size={16} className="text-medical-500" /> <span className="truncate">{patient.address}</span></div>
+                     <div className="flex flex-col gap-1.5 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                        <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><Bookmark size={10}/> Couverture Médicale</p>
+                        <p className="text-xs font-black text-indigo-700 uppercase">{patient.insuranceType} • <span className="text-[10px] opacity-70">{patient.insuranceNumber || 'Non renseigné'}</span></p>
+                     </div>
                   </div>
                </div>
-               <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Paramètres cliniques</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                         <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Poids</p>
-                         <p className="text-lg font-black">{patient.weight || '--'} kg</p>
+
+               <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
+                  <div>
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Paramètres cliniques</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                           <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Poids / Taille</p>
+                           <p className="text-sm font-black">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                           <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Groupe Sang.</p>
+                           <p className="text-sm font-black text-rose-400 flex items-center gap-1"><Heart size={10}/> {patient.bloodType || '--'}</p>
+                        </div>
+                     </div>
+                  </div>
+
+                   <div className="space-y-4">
+                      <div className="p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
+                         <p className="text-[9px] font-black text-indigo-400 uppercase mb-1">Antécédents Médicaux</p>
+                         <p className="text-xs font-bold text-indigo-100 leading-relaxed">
+                           {patient.medicalHistory && patient.medicalHistory.length ? patient.medicalHistory.join(', ') : 'Aucun antécédent majeur renseigné'}
+                         </p>
                       </div>
-                      <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                         <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Taille</p>
-                         <p className="text-lg font-black">{patient.height || '--'} cm</p>
+
+                      <div className="p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                         <p className="text-[9px] font-black text-rose-400 uppercase mb-1">Allergies & Intolérances</p>
+                         <p className="text-xs font-bold text-rose-100">
+                           {patient.allergies && patient.allergies.length ? patient.allergies.join(', ') : 'Aucune allergie connue'}
+                         </p>
                       </div>
-                   </div>
-                   <div className="mt-4 p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
-                      <p className="text-[9px] font-black text-rose-400 uppercase mb-1">Allergies</p>
-                      <p className="text-xs font-bold text-rose-100">{patient.allergies.length ? patient.allergies.join(', ') : 'Aucune'}</p>
                    </div>
                </div>
             </div>
@@ -213,6 +232,7 @@ export const PatientDMP: React.FC = () => {
           </div>
         )}
 
+        {/* Autres onglets restent inchangés... */}
         {activeTab === 'medical' && (
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden animate-fade-in p-8 space-y-8">
              <div className="flex justify-between items-center border-b border-slate-50 pb-6 mb-4">
@@ -250,7 +270,6 @@ export const PatientDMP: React.FC = () => {
 
         {activeTab === 'billing' && (
           <div className="space-y-6 animate-fade-in">
-             {/* RÉSUMÉ FINANCIER DANS LE DMP */}
              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0"><Receipt size={24}/></div>
