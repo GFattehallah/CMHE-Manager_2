@@ -18,6 +18,17 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
 
   const imcValue = calculateIMC();
 
+  // Fonction pour garantir que les antécédents sont toujours un tableau affichable
+  const formatList = (data: any) => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === 'string') return data.split(',').map(s => s.trim()).filter(Boolean);
+    return [];
+  };
+
+  const medicalHistory = formatList(patient.medicalHistory);
+  const allergies = formatList(patient.allergies);
+
   return (
     <div className="bg-white p-10 font-sans text-slate-900 mx-auto" style={{ width: '210mm', minHeight: '297mm', boxSizing: 'border-box', backgroundColor: '#ffffff' }}>
       {/* Header Professionnel */}
@@ -86,8 +97,8 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
              <span>Antécédents Médicaux</span>
            </h3>
            <p className="text-xs font-bold text-slate-700 leading-relaxed bg-white/60 p-4 rounded-2xl flex-1">
-             {(patient.medicalHistory && Array.isArray(patient.medicalHistory) && patient.medicalHistory.length > 0) 
-               ? patient.medicalHistory.join(', ') 
+             {medicalHistory.length > 0 
+               ? medicalHistory.join(', ') 
                : 'Aucun antécédent majeur déclaré.'}
            </p>
         </div>
@@ -96,8 +107,8 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
              <span>Allergies & Intolérances</span>
            </h3>
            <p className="text-xs font-bold text-slate-700 leading-relaxed bg-white/60 p-4 rounded-2xl flex-1">
-             {(patient.allergies && Array.isArray(patient.allergies) && patient.allergies.length > 0) 
-               ? patient.allergies.join(', ') 
+             {allergies.length > 0 
+               ? allergies.join(', ') 
                : 'Aucune allergie connue.'}
            </p>
         </div>

@@ -2,9 +2,9 @@ import { Patient, Appointment, AppointmentStatus, Invoice, PaymentType, Expense,
 
 /**
  * LOGO DU CABINET
- * Utilisation du fichier logo.png à la racine du projet.
+ * Utilisation du chemin absolu /logo.png pour garantir la visibilité sur www.gcmhe.ma
  */
-export const LOGO_URL = "logo.png";
+export const LOGO_URL = "/logo.png";
 
 // Auth Users
 export const MOCK_USERS: User[] = [

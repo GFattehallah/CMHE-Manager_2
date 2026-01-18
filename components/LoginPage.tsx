@@ -32,7 +32,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      {/* Correction md:row -> md:flex-row */}
       <div className="max-w-4xl w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-100 min-h-[600px]">
         
         {/* Left Side - Brand */}
@@ -40,9 +39,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
           <div className="absolute top-0 right-0 w-64 h-64 bg-medical-500/10 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
           <div className="relative z-10">
             <div className="mb-12">
-               <AppLogo size={80} className="shadow-2xl shadow-black/20 rounded-[2rem]" />
+               {/* Utilisation de AppLogo avec une taille généreuse et un style propre pour le branding */}
+               <AppLogo size={90} className="shadow-2xl shadow-black/40" />
             </div>
-            <h1 className="text-4xl font-black mb-4 tracking-tighter leading-tight">CMHE<br/>Manager Pro</h1>
+            <h1 className="text-4xl font-black mb-4 tracking-tighter leading-tight uppercase">CMHE<br/>Manager Pro</h1>
             <p className="text-medical-200 font-medium leading-relaxed">Solution de gestion intelligente pour le cabinet du Dr. Hasnaa El Malki.</p>
           </div>
           <div className="mt-8 text-[10px] font-black uppercase tracking-[0.2em] text-medical-400 relative z-10">

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Patient, Invoice } from '../types';
-import { Activity } from 'lucide-react';
-import { LOGO_URL } from '../constants';
+import { AppLogo } from './common/AppLogo';
 
 interface InvoiceTemplateProps {
   patient?: Patient;
@@ -10,7 +9,6 @@ interface InvoiceTemplateProps {
 
 export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoice }) => {
   const total = invoice.items.reduce((sum, item) => sum + item.price, 0);
-  const [logoError, setLogoError] = useState(false);
 
   const qrData = encodeURIComponent(`Facture N°${invoice.id.slice(-6).toUpperCase()} - Dr. Hasnaa El Malki`);
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=0c4a6e`;
@@ -30,18 +28,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 </div>
             </div>
             <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-10 h-10 flex items-center justify-center mb-1">
-                    {!logoError ? (
-                    <img 
-                        src={LOGO_URL} 
-                        alt="Logo CMHE" 
-                        className="max-h-full max-w-full object-contain"
-                        onError={() => setLogoError(true)}
-                    />
-                    ) : (
-                    <Activity size={24} className="text-slate-200" />
-                    )}
-                </div>
+                <AppLogo size={45} />
             </div>
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
@@ -85,7 +72,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                     </tr>
                 </thead>
                 <tbody className="text-slate-800">
-                    {invoice.items.slice(0, 8).map((item, idx) => (
+                    {invoice.items.map((item, idx) => (
                         <tr key={idx} className="border-b border-slate-100">
                             <td className="py-3 font-bold text-xs text-slate-700">{item.description}</td>
                             <td className="py-3 text-right font-black text-sm text-slate-900">{item.price.toFixed(2)}</td>
