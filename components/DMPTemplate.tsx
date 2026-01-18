@@ -18,7 +18,6 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
 
   const imcValue = calculateIMC();
 
-  // Fonction pour garantir que les antécédents sont toujours un tableau affichable
   const formatList = (data: any) => {
     if (!data) return [];
     if (Array.isArray(data)) return data;
@@ -74,42 +73,6 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
         </div>
       </div>
 
-      {/* Constantes Cliniques Étendues */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b pb-2">Biométrie</h3>
-           <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Poids / Taille</p>
-                <p className="text-sm font-black">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">IMC / Groupe</p>
-                <p className="text-sm font-black">{imcValue || '--'} / {patient.bloodType || '--'}</p>
-              </div>
-           </div>
-        </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b pb-2">Signes Vitaux</h3>
-           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">Temp / Tension</p>
-                <p className="text-xs font-black">{patient.temperature ? `${patient.temperature}°C` : '--'} / {patient.bloodPressure || '--'}</p>
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">SpO2 / B.U</p>
-                <p className="text-xs font-black">
-                  {patient.oximetry ? `${patient.oximetry}%` : '--'} / {patient.urinaryStrip || '--'}
-                </p>
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">F.C / F.R</p>
-                <p className="text-xs font-black">{patient.heartRate || '--'} bpm / {patient.respiratoryRate || '--'} cpm</p>
-              </div>
-           </div>
-        </div>
-      </div>
-
       {/* PROFIL MÉDICAL - SECTION CRITIQUE (Antécédents & Allergies) */}
       <div className="grid grid-cols-2 gap-6 mb-10">
         <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col">
@@ -134,18 +97,30 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
         </div>
       </div>
 
-      {/* Historique Médical Détaillé */}
+      {/* Historique Médical Détaillé avec Constantes */}
       <div className="mb-10">
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2 mb-6">Journal des Consultations</h3>
+        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2 mb-6">Journal des Consultations & Suivi des Constantes</h3>
         <div className="space-y-6">
-          {consultations.length > 0 ? consultations.slice(0, 10).map((c) => (
-            <div key={c.id} className="relative pl-8 border-l-2 border-slate-200 pb-4">
+          {consultations.length > 0 ? consultations.slice(0, 15).map((c) => (
+            <div key={c.id} className="relative pl-8 border-l-2 border-slate-200 pb-6">
               <div className="absolute -left-[7px] top-0 w-3 h-3 bg-medical-600 rounded-full border-2 border-white shadow-sm"></div>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-[10px] font-black text-slate-400 uppercase">{new Date(c.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                <span className="text-[9px] font-black bg-slate-900 text-white px-3 py-1 rounded-full uppercase tracking-widest">Compte-rendu</span>
+                <span className="text-[9px] font-black bg-slate-900 text-white px-3 py-1 rounded-full uppercase tracking-widest">Suivi Clinique</span>
               </div>
+              
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                {/* Section Constantes de la Visite */}
+                {c.vitals && (
+                  <div className="flex flex-wrap gap-4 mb-4 pb-4 border-b border-slate-200/50">
+                     {c.vitals.bloodPressure && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Tension:</span> <span className="text-rose-600">{c.vitals.bloodPressure}</span></div>}
+                     {c.vitals.temperature && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Temp:</span> <span className="text-orange-600">{c.vitals.temperature}°C</span></div>}
+                     {c.vitals.oximetry && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">SpO2:</span> <span className="text-cyan-600">{c.vitals.oximetry}%</span></div>}
+                     {c.vitals.weight && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Poids:</span> <span className="text-slate-900">{c.vitals.weight}kg</span></div>}
+                     {c.vitals.heartRate && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">F.C:</span> <span className="text-red-600">{c.vitals.heartRate} bpm</span></div>}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Diagnostic & Observation</p>
@@ -153,7 +128,7 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
                     <p className="text-[11px] text-slate-600 italic leading-relaxed">"{c.symptoms}"</p>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Prescription</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Traitement prescrit</p>
                     <ul className="text-[11px] font-bold text-slate-700 space-y-1">
                       {c.prescription && c.prescription.length > 0 ? (
                         c.prescription.map((m, i) => <li key={i} className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-medical-500 rounded-full"></span> {m}</li>)

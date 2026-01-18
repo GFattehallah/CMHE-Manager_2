@@ -5,7 +5,7 @@ import { Patient, Consultation, Vitals } from '../types';
 import { 
   Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, 
   Download, Eye, Trash2, CheckSquare, Square, MinusSquare, Loader2,
-  Thermometer, Wind, Droplets, TestTube, Scale, Ruler, Calendar, Info
+  Thermometer, Wind, Droplets, TestTube, Scale, Ruler, Calendar, Info, Edit2, XCircle, PlusCircle
 } from 'lucide-react';
 import { PrescriptionTemplate } from './PrescriptionTemplate';
 
@@ -19,6 +19,7 @@ export const ConsultationManager: React.FC = () => {
   // UI State
   const [showPreview, setShowPreview] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editingConsultationId, setEditingConsultationId] = useState<string | null>(null);
 
   // Form State
   const [symptoms, setSymptoms] = useState('');
@@ -57,19 +58,21 @@ export const ConsultationManager: React.FC = () => {
       setConsultationHistory(patientHistory);
       setSelectedIds([]);
       
-      // Pré-remplir les vitals avec les dernières connues du patient
-      const p = patients.find(pat => pat.id === selectedPatientId);
-      if (p) {
-        setVitals({
-          temperature: p.temperature || '',
-          bloodPressure: p.bloodPressure || '',
-          heartRate: p.heartRate || '',
-          respiratoryRate: p.respiratoryRate || '',
-          oximetry: p.oximetry || '',
-          urinaryStrip: p.urinaryStrip || '',
-          weight: p.weight || '',
-          height: p.height || ''
-        });
+      // Si on n'est pas en train d'éditer, on pré-remplit les vitals avec les dernières connues
+      if (!editingConsultationId) {
+        const p = patients.find(pat => pat.id === selectedPatientId);
+        if (p) {
+          setVitals({
+            temperature: p.temperature || '',
+            bloodPressure: p.bloodPressure || '',
+            heartRate: p.heartRate || '',
+            respiratoryRate: p.respiratoryRate || '',
+            oximetry: p.oximetry || '',
+            urinaryStrip: p.urinaryStrip || '',
+            weight: p.weight || '',
+            height: p.height || ''
+          });
+        }
       }
     } else {
       setConsultationHistory([]);
@@ -79,7 +82,7 @@ export const ConsultationManager: React.FC = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [selectedPatientId, patients]);
+  }, [selectedPatientId, patients, editingConsultationId]);
 
   const selectedPatient = patients.find(p => p.id === selectedPatientId);
 
@@ -120,6 +123,43 @@ export const ConsultationManager: React.FC = () => {
     (window as any).html2pdf().set(opt).from(element).save();
   };
 
+  const resetForm = () => {
+    setEditingConsultationId(null);
+    setSymptoms('');
+    setAiAnalysis('');
+    setPrescription([]);
+    setDiagnosis('');
+    setConsultationDate(new Date().toISOString().split('T')[0]);
+    // On ré-initialise avec les constantes du patient (baseline)
+    if (selectedPatient) {
+        setVitals({
+            temperature: selectedPatient.temperature || '',
+            bloodPressure: selectedPatient.bloodPressure || '',
+            heartRate: selectedPatient.heartRate || '',
+            respiratoryRate: selectedPatient.respiratoryRate || '',
+            oximetry: selectedPatient.oximetry || '',
+            urinaryStrip: selectedPatient.urinaryStrip || '',
+            weight: selectedPatient.weight || '',
+            height: selectedPatient.height || ''
+        });
+    }
+  };
+
+  const handleEdit = (consult: Consultation) => {
+    setEditingConsultationId(consult.id);
+    setConsultationDate(new Date(consult.date).toISOString().split('T')[0]);
+    setSymptoms(consult.symptoms);
+    setDiagnosis(consult.diagnosis);
+    setAiAnalysis(consult.notes || '');
+    setPrescription(consult.prescription || []);
+    setVitals(consult.vitals || {
+        temperature: '', bloodPressure: '', heartRate: '', respiratoryRate: '',
+        oximetry: '', urinaryStrip: '', weight: '', height: ''
+    });
+    setActiveTab('new');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSave = async () => {
     if (!selectedPatient) return;
     if (!diagnosis.trim()) {
@@ -128,7 +168,7 @@ export const ConsultationManager: React.FC = () => {
     }
 
     const newConsultation: Consultation = {
-      id: Date.now().toString(),
+      id: editingConsultationId || Date.now().toString(),
       patientId: selectedPatient.id,
       appointmentId: 'manual', 
       date: new Date(consultationDate).toISOString(),
@@ -149,11 +189,8 @@ export const ConsultationManager: React.FC = () => {
         });
 
         await loadHistory();
-        alert('Consultation et constantes sauvegardées avec succès !');
-        setSymptoms('');
-        setAiAnalysis('');
-        setPrescription([]);
-        setDiagnosis('');
+        alert(editingConsultationId ? 'Consultation mise à jour avec succès !' : 'Nouvelle consultation enregistrée !');
+        resetForm();
         setActiveTab('history');
     } catch (err) {
         alert("Erreur lors de la sauvegarde. Vérifiez votre connexion.");
@@ -175,7 +212,10 @@ export const ConsultationManager: React.FC = () => {
             <select 
                 className="flex-1 p-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-medical-500 outline-none font-medium"
                 value={selectedPatientId}
-                onChange={(e) => setSelectedPatientId(e.target.value)}
+                onChange={(e) => {
+                    setSelectedPatientId(e.target.value);
+                    resetForm();
+                }}
             >
                 <option value="">-- Rechercher un patient --</option>
                 {patients.map(p => (
@@ -208,7 +248,8 @@ export const ConsultationManager: React.FC = () => {
                     onClick={() => setActiveTab('new')}
                     className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'new' ? 'text-medical-600 border-b-2 border-medical-600 bg-medical-50' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
-                    <FileText size={16}/> Nouvelle Consultation
+                    {editingConsultationId ? <Edit2 size={16}/> : <FileText size={16}/>} 
+                    {editingConsultationId ? 'Modifier la visite' : 'Nouvelle Consultation'}
                 </button>
                 <button 
                     onClick={() => setActiveTab('history')}
@@ -223,6 +264,21 @@ export const ConsultationManager: React.FC = () => {
                 {activeTab === 'new' && (
                     <div className="space-y-6 animate-fade-in pb-10">
                         
+                        {editingConsultationId && (
+                            <div className="bg-indigo-600 text-white p-4 rounded-2xl flex items-center justify-between shadow-lg shadow-indigo-100 animate-fade-in">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-white/20 rounded-xl"><Edit2 size={18}/></div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Mode édition actif</p>
+                                        <p className="text-sm font-bold">Vous modifiez la visite du {new Date(consultationDate).toLocaleDateString('fr-FR')}</p>
+                                    </div>
+                                </div>
+                                <button onClick={resetForm} className="bg-white/20 hover:bg-white/30 p-2 rounded-xl transition flex items-center gap-2 text-xs font-black uppercase">
+                                    <PlusCircle size={16}/> Nouveau
+                                </button>
+                            </div>
+                        )}
+
                         {/* SECTION DATE & CONSTANTES */}
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-slate-50">
@@ -239,7 +295,7 @@ export const ConsultationManager: React.FC = () => {
                                 </div>
                                 <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold italic pt-4 md:pt-6">
                                     <Info size={14} className="shrink-0"/>
-                                    Modifier pour enregistrer une consultation passée.
+                                    Modifier pour enregistrer une consultation passée ou corriger une date.
                                 </div>
                             </div>
 
@@ -329,7 +385,7 @@ export const ConsultationManager: React.FC = () => {
 
                         <div className="pt-2 flex gap-3 pb-8">
                             <button onClick={handleSave} className="flex-1 bg-medical-600 text-white py-3 rounded-xl hover:bg-medical-700 shadow-md flex items-center justify-center gap-2 font-bold transition">
-                                <Save size={18} /> Enregistrer Consultation
+                                <Save size={18} /> {editingConsultationId ? 'Mettre à jour' : 'Enregistrer Consultation'}
                             </button>
                             <button onClick={() => setShowPreview(!showPreview)} className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition"><Eye size={18} /></button>
                             <button onClick={handleDownloadPDF} className="px-4 bg-rose-600 text-white py-3 rounded-xl hover:bg-rose-700 shadow-md transition"><Download size={18} /></button>
@@ -346,7 +402,7 @@ export const ConsultationManager: React.FC = () => {
                             </div>
                         ) : (
                             consultationHistory.map((consult) => (
-                                <div key={consult.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-medical-300 transition-all">
+                                <div key={consult.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-medical-300 transition-all group/card">
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 bg-medical-50 text-medical-600 rounded-lg flex items-center justify-center font-bold text-xs uppercase text-center flex-col">
@@ -358,14 +414,24 @@ export const ConsultationManager: React.FC = () => {
                                                 <p className="text-[10px] text-slate-400 font-bold">{new Date(consult.date).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</p>
                                             </div>
                                         </div>
+                                        <div className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                                            <button 
+                                                onClick={() => handleEdit(consult)}
+                                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                                                title="Modifier cette consultation"
+                                            >
+                                                <Edit2 size={16}/>
+                                            </button>
+                                        </div>
                                     </div>
                                     
                                     {consult.vitals && (
-                                        <div className="grid grid-cols-4 gap-2 mb-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                            {consult.vitals.temperature && <div className="text-[9px] font-bold text-slate-500">T°: <span className="text-orange-600">{consult.vitals.temperature}°C</span></div>}
-                                            {consult.vitals.bloodPressure && <div className="text-[9px] font-bold text-slate-500">TA: <span className="text-rose-600">{consult.vitals.bloodPressure}</span></div>}
-                                            {consult.vitals.heartRate && <div className="text-[9px] font-bold text-slate-500">FC: <span className="text-red-600">{consult.vitals.heartRate}</span></div>}
-                                            {consult.vitals.oximetry && <div className="text-[9px] font-bold text-slate-500">SpO2: <span className="text-cyan-600">{consult.vitals.oximetry}%</span></div>}
+                                        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                            {consult.vitals.temperature && <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1"><Thermometer size={10} className="text-orange-500"/> T°: <span className="text-orange-600">{consult.vitals.temperature}°C</span></div>}
+                                            {consult.vitals.bloodPressure && <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1"><Activity size={10} className="text-rose-500"/> TA: <span className="text-rose-600">{consult.vitals.bloodPressure}</span></div>}
+                                            {consult.vitals.weight && <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1"><Scale size={10} className="text-indigo-500"/> Poids: <span className="text-indigo-600">{consult.vitals.weight}kg</span></div>}
+                                            {consult.vitals.heartRate && <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1"><Activity size={10} className="text-red-500"/> FC: <span className="text-red-600">{consult.vitals.heartRate} bpm</span></div>}
+                                            {consult.vitals.oximetry && <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1"><Droplets size={10} className="text-cyan-500"/> SpO2: <span className="text-cyan-600">{consult.vitals.oximetry}%</span></div>}
                                         </div>
                                     )}
 

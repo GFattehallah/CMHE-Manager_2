@@ -164,10 +164,10 @@ export const PatientDMP: React.FC = () => {
                   </div>
                </div>
 
-               {/* CARTE MÉDICALE CRITIQUE */}
+               {/* CARTE MÉDICALE CRITIQUE (Dernières constantes connues) */}
                <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
                   <div>
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Constantes & Profil</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Constantes Actuelles</h3>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                            <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Poids / Taille</p>
@@ -204,15 +204,9 @@ export const PatientDMP: React.FC = () => {
                            <p className="text-xs font-black text-cyan-400">{patient.oximetry ? `${patient.oximetry}%` : '--'}</p>
                         </div>
                     </div>
-
-                    <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><TestTube size={10}/> Bandelettes Urinaires</p>
-                        <p className="text-xs font-bold text-amber-200">{patient.urinaryStrip || '--'}</p>
-                    </div>
                   </div>
 
                    <div className="space-y-4 pt-4 border-t border-white/5">
-                      {/* SECTION ANTÉCÉDENTS - CRITIQUE */}
                       <div className="p-5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
                          <div className="flex justify-between items-center mb-2">
                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Antécédents Médicaux</p>
@@ -225,10 +219,9 @@ export const PatientDMP: React.FC = () => {
                          </p>
                       </div>
 
-                      {/* SECTION ALLERGIES - CRITIQUE */}
                       <div className="p-5 bg-rose-500/10 rounded-2xl border border-rose-500/20">
                          <div className="flex justify-between items-center mb-2">
-                           <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Allergies & Intolérances</p>
+                           <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Allergies</p>
                            <AlertCircle size={12} className="text-rose-400"/>
                          </div>
                          <p className="text-xs font-bold text-rose-100 leading-relaxed bg-black/20 p-3 rounded-xl mt-1">
@@ -241,7 +234,7 @@ export const PatientDMP: React.FC = () => {
                </div>
             </div>
 
-            {/* COLONNE DROITE: STATS & ACTIVITÉ */}
+            {/* COLONNE DROITE: ACTIVITÉ RÉCENTE */}
             <div className="lg:col-span-8 space-y-6">
                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm text-center">
@@ -259,69 +252,100 @@ export const PatientDMP: React.FC = () => {
                </div>
 
                <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex-1">
-                  <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30 font-black text-[10px] text-slate-800 uppercase tracking-widest">Résumé des dernières prescriptions</div>
+                  <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30 font-black text-[10px] text-slate-800 uppercase tracking-widest">Dernières visites & constantes de suivi</div>
                   <div className="p-8 space-y-6">
-                     {consultations.slice(0, 3).map(c => (
+                     {consultations.slice(0, 5).map(c => (
                        <div key={c.id} className="flex gap-4 border-b border-slate-50 pb-6 last:border-0 group">
                           <div className="w-10 h-10 bg-medical-50 text-medical-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-medical-600 group-hover:text-white transition-all"><Activity size={18}/></div>
                           <div className="flex-1">
-                             <div className="flex justify-between mb-1">
+                             <div className="flex justify-between mb-2">
                                 <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{c.diagnosis}</p>
                                 <p className="text-[10px] text-slate-400 font-bold">{new Date(c.date).toLocaleDateString('fr-FR')}</p>
                              </div>
-                             <p className="text-xs text-slate-500 italic mb-3">"{c.symptoms.substring(0, 100)}..."</p>
-                             {c.prescription && c.prescription.length > 0 && (
-                               <div className="flex flex-wrap gap-2">
-                                 {c.prescription.map((m, i) => (
-                                   <span key={i} className="text-[9px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg border border-slate-200 flex items-center gap-1">
-                                      <Pill size={10} className="text-medical-500"/> {m}
-                                   </span>
-                                 ))}
-                               </div>
+                             
+                             {/* Affichage des constantes de la visite spécifique */}
+                             {c.vitals && (
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                   {c.vitals.temperature && <span className="text-[9px] font-bold bg-orange-50 text-orange-600 px-2 py-0.5 rounded border border-orange-100 flex items-center gap-1"><Thermometer size={10}/> {c.vitals.temperature}°C</span>}
+                                   {c.vitals.bloodPressure && <span className="text-[9px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded border border-rose-100 flex items-center gap-1"><Activity size={10}/> {c.vitals.bloodPressure}</span>}
+                                   {c.vitals.oximetry && <span className="text-[9px] font-bold bg-cyan-50 text-cyan-600 px-2 py-0.5 rounded border border-cyan-100 flex items-center gap-1"><Droplets size={10}/> {c.vitals.oximetry}%</span>}
+                                   {c.vitals.weight && <span className="text-[9px] font-bold bg-slate-50 text-slate-600 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1"><Scale size={10}/> {c.vitals.weight}kg</span>}
+                                </div>
                              )}
+
+                             <p className="text-xs text-slate-500 italic mb-2">"{c.symptoms.substring(0, 100)}..."</p>
                           </div>
                        </div>
                      ))}
-                     {consultations.length === 0 && <div className="text-center py-10 opacity-20"><Info size={32} className="mx-auto mb-2"/><p className="font-black uppercase text-[9px] tracking-widest">Dossier médical vide</p></div>}
+                     {consultations.length === 0 && <div className="text-center py-10 opacity-20"><Info size={32} className="mx-auto mb-2"/><p className="font-black uppercase text-[9px] tracking-widest">Aucune consultation enregistrée</p></div>}
                   </div>
                </div>
             </div>
           </div>
         )}
 
-        {/* TAB 2: MEDICAL HISTORY */}
+        {/* TAB 2: MEDICAL HISTORY (DETAILED TRACKING) */}
         {activeTab === 'medical' && (
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden animate-fade-in p-8 space-y-8">
              <div className="flex justify-between items-center border-b border-slate-50 pb-6 mb-4">
-                <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm flex items-center gap-2"><History size={18} className="text-medical-600"/> Historique Complet</h3>
-                <span className="text-[10px] font-black bg-slate-100 text-slate-400 px-4 py-1.5 rounded-full uppercase tracking-widest">{consultations.length} Visites</span>
+                <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm flex items-center gap-2"><History size={18} className="text-medical-600"/> Chronologie du suivi patient</h3>
+                <span className="text-[10px] font-black bg-slate-100 text-slate-400 px-4 py-1.5 rounded-full uppercase tracking-widest">{consultations.length} Consultations</span>
              </div>
+             
              {consultations.map(c => (
                <div key={c.id} className="relative pl-10 border-l-2 border-slate-100 pb-12 last:pb-0">
                   <div className="absolute -left-[11px] top-0 w-5 h-5 bg-white border-4 border-medical-600 rounded-full shadow-sm"></div>
-                  <div className="flex justify-between items-start mb-4">
+                  
+                  <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
                      <div>
                         <p className="text-xs font-black text-slate-400 mb-1 flex items-center gap-2"><Clock size={12}/> {new Date(c.date).toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'})}</p>
                         <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter">{c.diagnosis}</h4>
                      </div>
+                     
+                     {/* Badge de constantes pour identification rapide dans la timeline */}
+                     {c.vitals && (
+                        <div className="flex flex-wrap gap-1">
+                           {c.vitals.bloodPressure && <span className="text-[8px] font-black bg-rose-600 text-white px-2 py-0.5 rounded-md uppercase">{c.vitals.bloodPressure}</span>}
+                           {c.vitals.temperature && <span className="text-[8px] font-black bg-orange-500 text-white px-2 py-0.5 rounded-md uppercase">{c.vitals.temperature}°C</span>}
+                        </div>
+                     )}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
-                     <div className="space-y-3">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Info size={12} className="text-medical-600"/> Observations</p>
-                        <p className="text-sm text-slate-600 italic whitespace-pre-wrap leading-relaxed bg-white p-4 rounded-2xl border border-slate-200/50">"{c.symptoms}"</p>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                     <div className="lg:col-span-1 space-y-4">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Activity size={12} className="text-medical-600"/> Constantes de visite</p>
+                        {c.vitals ? (
+                           <div className="grid grid-cols-2 gap-2">
+                              <VitalTag icon={Thermometer} label="T°" value={c.vitals.temperature} unit="°C" color="text-orange-600" />
+                              <VitalTag icon={Activity} label="TA" value={c.vitals.bloodPressure} unit="" color="text-rose-600" />
+                              <VitalTag icon={Activity} label="FC" value={c.vitals.heartRate} unit="bpm" color="text-red-600" />
+                              <VitalTag icon={Wind} label="FR" value={c.vitals.respiratoryRate} unit="cpm" color="text-blue-600" />
+                              <VitalTag icon={Droplets} label="SpO2" value={c.vitals.oximetry} unit="%" color="text-cyan-600" />
+                              <VitalTag icon={Scale} label="Poids" value={c.vitals.weight} unit="kg" color="text-slate-600" />
+                           </div>
+                        ) : <p className="text-[10px] italic text-slate-400">Non renseignées</p>}
                      </div>
-                     <div className="space-y-3">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Pill size={12} className="text-medical-600"/> Prescription associée</p>
-                        <ul className="text-xs font-bold text-slate-800 space-y-2 bg-white p-4 rounded-2xl border border-slate-200/50">
-                           {c.prescription && c.prescription.length > 0 ? c.prescription.map((m, i) => (
-                             <li key={i} className="flex items-center gap-2"><ArrowRight size={10} className="text-medical-500 shrink-0"/> {m}</li>
-                           )) : <li className="text-slate-300 italic font-medium">Aucun médicament prescrit</li>}
-                        </ul>
+
+                     <div className="lg:col-span-1 space-y-4">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Info size={12} className="text-medical-600"/> Compte-rendu</p>
+                        <div className="text-xs text-slate-600 italic leading-relaxed bg-white p-4 rounded-2xl border border-slate-200/50 min-h-[80px]">
+                           "{c.symptoms}"
+                        </div>
+                     </div>
+
+                     <div className="lg:col-span-1 space-y-4">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Pill size={12} className="text-medical-600"/> Traitement</p>
+                        <div className="bg-white p-4 rounded-2xl border border-slate-200/50 min-h-[80px]">
+                           <ul className="text-[10px] font-bold text-slate-800 space-y-1.5">
+                              {c.prescription && c.prescription.length > 0 ? c.prescription.map((m, i) => (
+                                <li key={i} className="flex items-center gap-2"><ArrowRight size={10} className="text-medical-500 shrink-0"/> {m}</li>
+                              )) : <li className="text-slate-300 italic font-medium">Aucun médicament</li>}
+                           </ul>
+                        </div>
                      </div>
                   </div>
                </div>
              ))}
-             {consultations.length === 0 && <div className="text-center py-20 opacity-20 flex flex-col items-center"><FileText size={48} className="mb-2"/><p className="font-black uppercase tracking-widest text-[10px]">Aucun historique</p></div>}
           </div>
         )}
 
@@ -340,10 +364,6 @@ export const PatientDMP: React.FC = () => {
                 <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
                    <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shrink-0"><AlertCircle size={24}/></div>
                    <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Restant</p><p className="text-xl font-black text-rose-600">{totalPending.toLocaleString()} <span className="text-xs">MAD</span></p></div>
-                </div>
-                <div className="bg-slate-900 p-5 rounded-3xl shadow-xl flex items-center gap-4 text-white">
-                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0"><TrendingUp size={24}/></div>
-                   <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Paiement</p><p className="text-xl font-black text-white">{totalInvoiced > 0 ? Math.round((totalPaid / totalInvoiced) * 100) : 0}%</p></div>
                 </div>
              </div>
 
@@ -372,7 +392,6 @@ export const PatientDMP: React.FC = () => {
                            </td>
                         </tr>
                       ))}
-                      {invoices.length === 0 && <tr><td colSpan={5} className="p-20 text-center opacity-30 flex flex-col items-center"><Wallet size={40}/><p className="text-[10px] font-black uppercase">Aucune facture</p></td></tr>}
                    </tbody>
                 </table>
              </div>
@@ -387,4 +406,14 @@ export const PatientDMP: React.FC = () => {
 
     </div>
   );
+};
+
+const VitalTag = ({ icon: Icon, label, value, unit, color }: any) => {
+   if (!value) return null;
+   return (
+      <div className="bg-white px-2 py-1 rounded-lg border border-slate-200 flex items-center justify-between">
+         <span className="text-[8px] font-black text-slate-400 uppercase flex items-center gap-1"><Icon size={8}/> {label}</span>
+         <span className={`text-[10px] font-black ${color}`}>{value}{unit}</span>
+      </div>
+   );
 };
