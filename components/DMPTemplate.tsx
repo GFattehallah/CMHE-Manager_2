@@ -101,7 +101,7 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
       <div className="mb-10">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2 mb-6">Journal des Consultations & Suivi des Constantes</h3>
         <div className="space-y-6">
-          {consultations.length > 0 ? consultations.slice(0, 15).map((c) => (
+          {consultations.length > 0 ? consultations.map((c) => (
             <div key={c.id} className="relative pl-8 border-l-2 border-slate-200 pb-6">
               <div className="absolute -left-[7px] top-0 w-3 h-3 bg-medical-600 rounded-full border-2 border-white shadow-sm"></div>
               <div className="flex justify-between items-center mb-3">
@@ -110,14 +110,15 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
               </div>
               
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                {/* Section Constantes de la Visite */}
+                {/* Section Constantes de la Visite - TOUT EST INCLUS ICI */}
                 {c.vitals && (
                   <div className="flex flex-wrap gap-4 mb-4 pb-4 border-b border-slate-200/50">
+                     {c.vitals.weight && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Poids:</span> <span className="text-indigo-600 font-black">{c.vitals.weight} kg</span></div>}
                      {c.vitals.bloodPressure && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Tension:</span> <span className="text-rose-600">{c.vitals.bloodPressure}</span></div>}
                      {c.vitals.temperature && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Temp:</span> <span className="text-orange-600">{c.vitals.temperature}°C</span></div>}
                      {c.vitals.oximetry && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">SpO2:</span> <span className="text-cyan-600">{c.vitals.oximetry}%</span></div>}
-                     {c.vitals.weight && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Poids:</span> <span className="text-slate-900">{c.vitals.weight}kg</span></div>}
                      {c.vitals.heartRate && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">F.C:</span> <span className="text-red-600">{c.vitals.heartRate} bpm</span></div>}
+                     {c.vitals.height && <div className="text-[10px] font-bold"><span className="text-slate-400 uppercase">Taille:</span> <span className="text-slate-500">{c.vitals.height} cm</span></div>}
                   </div>
                 )}
 

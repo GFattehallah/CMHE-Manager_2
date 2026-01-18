@@ -167,7 +167,7 @@ export const PatientDMP: React.FC = () => {
                {/* CARTE MÉDICALE CRITIQUE (Dernières constantes connues) */}
                <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
                   <div>
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Constantes Actuelles</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Constantes Profil Actuel</h3>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                            <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Poids / Taille</p>
@@ -254,7 +254,7 @@ export const PatientDMP: React.FC = () => {
                <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex-1">
                   <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30 font-black text-[10px] text-slate-800 uppercase tracking-widest">Dernières visites & constantes de suivi</div>
                   <div className="p-8 space-y-6">
-                     {consultations.slice(0, 5).map(c => (
+                     {consultations.slice(0, 10).map(c => (
                        <div key={c.id} className="flex gap-4 border-b border-slate-50 pb-6 last:border-0 group">
                           <div className="w-10 h-10 bg-medical-50 text-medical-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-medical-600 group-hover:text-white transition-all"><Activity size={18}/></div>
                           <div className="flex-1">
@@ -263,17 +263,18 @@ export const PatientDMP: React.FC = () => {
                                 <p className="text-[10px] text-slate-400 font-bold">{new Date(c.date).toLocaleDateString('fr-FR')}</p>
                              </div>
                              
-                             {/* Affichage des constantes de la visite spécifique */}
+                             {/* Affichage des constantes de la visite spécifique - POIDS INCLUS ICI */}
                              {c.vitals && (
                                 <div className="flex flex-wrap gap-2 mb-3">
-                                   {c.vitals.temperature && <span className="text-[9px] font-bold bg-orange-50 text-orange-600 px-2 py-0.5 rounded border border-orange-100 flex items-center gap-1"><Thermometer size={10}/> {c.vitals.temperature}°C</span>}
+                                   {c.vitals.weight && <span className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-100 flex items-center gap-1"><Scale size={10}/> {c.vitals.weight} kg</span>}
                                    {c.vitals.bloodPressure && <span className="text-[9px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded border border-rose-100 flex items-center gap-1"><Activity size={10}/> {c.vitals.bloodPressure}</span>}
+                                   {c.vitals.temperature && <span className="text-[9px] font-bold bg-orange-50 text-orange-600 px-2 py-0.5 rounded border border-orange-100 flex items-center gap-1"><Thermometer size={10}/> {c.vitals.temperature}°C</span>}
                                    {c.vitals.oximetry && <span className="text-[9px] font-bold bg-cyan-50 text-cyan-600 px-2 py-0.5 rounded border border-cyan-100 flex items-center gap-1"><Droplets size={10}/> {c.vitals.oximetry}%</span>}
-                                   {c.vitals.weight && <span className="text-[9px] font-bold bg-slate-50 text-slate-600 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1"><Scale size={10}/> {c.vitals.weight}kg</span>}
+                                   {c.vitals.heartRate && <span className="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded border border-red-100 flex items-center gap-1"><Heart size={10}/> {c.vitals.heartRate} bpm</span>}
                                 </div>
                              )}
 
-                             <p className="text-xs text-slate-500 italic mb-2">"{c.symptoms.substring(0, 100)}..."</p>
+                             <p className="text-xs text-slate-500 italic mb-2 leading-relaxed">"{c.symptoms.substring(0, 150)}..."</p>
                           </div>
                        </div>
                      ))}
@@ -305,8 +306,8 @@ export const PatientDMP: React.FC = () => {
                      {/* Badge de constantes pour identification rapide dans la timeline */}
                      {c.vitals && (
                         <div className="flex flex-wrap gap-1">
+                           {c.vitals.weight && <span className="text-[8px] font-black bg-indigo-600 text-white px-2 py-0.5 rounded-md uppercase">{c.vitals.weight} kg</span>}
                            {c.vitals.bloodPressure && <span className="text-[8px] font-black bg-rose-600 text-white px-2 py-0.5 rounded-md uppercase">{c.vitals.bloodPressure}</span>}
-                           {c.vitals.temperature && <span className="text-[8px] font-black bg-orange-500 text-white px-2 py-0.5 rounded-md uppercase">{c.vitals.temperature}°C</span>}
                         </div>
                      )}
                   </div>
@@ -316,12 +317,12 @@ export const PatientDMP: React.FC = () => {
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Activity size={12} className="text-medical-600"/> Constantes de visite</p>
                         {c.vitals ? (
                            <div className="grid grid-cols-2 gap-2">
-                              <VitalTag icon={Thermometer} label="T°" value={c.vitals.temperature} unit="°C" color="text-orange-600" />
+                              <VitalTag icon={Scale} label="Poids" value={c.vitals.weight} unit="kg" color="text-indigo-600" />
                               <VitalTag icon={Activity} label="TA" value={c.vitals.bloodPressure} unit="" color="text-rose-600" />
+                              <VitalTag icon={Thermometer} label="T°" value={c.vitals.temperature} unit="°C" color="text-orange-600" />
                               <VitalTag icon={Activity} label="FC" value={c.vitals.heartRate} unit="bpm" color="text-red-600" />
                               <VitalTag icon={Wind} label="FR" value={c.vitals.respiratoryRate} unit="cpm" color="text-blue-600" />
                               <VitalTag icon={Droplets} label="SpO2" value={c.vitals.oximetry} unit="%" color="text-cyan-600" />
-                              <VitalTag icon={Scale} label="Poids" value={c.vitals.weight} unit="kg" color="text-slate-600" />
                            </div>
                         ) : <p className="text-[10px] italic text-slate-400">Non renseignées</p>}
                      </div>

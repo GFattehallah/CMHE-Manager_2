@@ -58,7 +58,7 @@ export const ConsultationManager: React.FC = () => {
       setConsultationHistory(patientHistory);
       setSelectedIds([]);
       
-      // Si on n'est pas en train d'éditer, on pré-remplit les vitals avec les dernières connues
+      // Si on n'est pas en train d'éditer, on pré-remplit les vitals avec les dernières connues du profil patient
       if (!editingConsultationId) {
         const p = patients.find(pat => pat.id === selectedPatientId);
         if (p) {
@@ -130,7 +130,7 @@ export const ConsultationManager: React.FC = () => {
     setPrescription([]);
     setDiagnosis('');
     setConsultationDate(new Date().toISOString().split('T')[0]);
-    // On ré-initialise avec les constantes du patient (baseline)
+    // On ré-initialise avec les constantes actuelles du patient
     if (selectedPatient) {
         setVitals({
             temperature: selectedPatient.temperature || '',
@@ -182,7 +182,7 @@ export const ConsultationManager: React.FC = () => {
     try {
         await DataService.saveConsultation(newConsultation);
         
-        // Mettre à jour les constantes sur le profil patient aussi
+        // Mettre à jour les constantes sur le profil global du patient
         await DataService.savePatient({
             ...selectedPatient,
             ...vitals
