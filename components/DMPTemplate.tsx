@@ -19,7 +19,7 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
   const imcValue = calculateIMC();
 
   return (
-    <div className="bg-white p-10 font-sans text-slate-900 mx-auto" style={{ width: '210mm', minHeight: '297mm', boxSizing: 'border-box' }}>
+    <div className="bg-white p-10 font-sans text-slate-900 mx-auto" style={{ width: '210mm', minHeight: '297mm', boxSizing: 'border-box', backgroundColor: '#ffffff' }}>
       {/* Header Professionnel */}
       <div className="border-b-4 border-slate-900 pb-6 mb-8 grid grid-cols-3 items-center">
         <div className="text-left">
@@ -95,15 +95,18 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
                 <p className="text-sm font-black text-slate-900 mb-4 whitespace-pre-wrap">{c.diagnosis}</p>
                 
                 <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200">
-                  <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Symptômes</p>
+                  <div className="space-y-2">
+                    <p className="text-[9px] font-black text-slate-400 uppercase">Symptômes</p>
                     <p className="text-[11px] text-slate-600 italic leading-relaxed">"{c.symptoms}"</p>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Traitement</p>
+                  <div className="space-y-2">
+                    <p className="text-[9px] font-black text-slate-400 uppercase">Prescription</p>
                     <ul className="text-[11px] font-bold text-slate-700 space-y-1">
-                      {c.prescription.map((m, i) => <li key={i}>• {m}</li>)}
-                      {c.prescription.length === 0 && <li className="italic text-slate-300">Aucune prescription</li>}
+                      {c.prescription && c.prescription.length > 0 ? (
+                        c.prescription.map((m, i) => <li key={i}>• {m}</li>)
+                      ) : (
+                        <li className="italic text-slate-300">Aucune prescription</li>
+                      )}
                     </ul>
                   </div>
                 </div>
