@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Printer, Plus, FileText, Calendar, Eye, Pill, Download, Trash2, Loader2 } from 'lucide-react';
+import { Search, Printer, Plus, FileText, Calendar, Eye, Pill, Download, Trash2, Loader2, Info } from 'lucide-react';
 import { DataService } from '../services/dataService';
 import { Consultation, Patient } from '../types';
 import { PrescriptionTemplate } from './PrescriptionTemplate';
@@ -254,6 +254,7 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
     const [patientId, setPatientId] = useState('');
     const [diagnosis, setDiagnosis] = useState('Consultation Standard');
     const [meds, setMeds] = useState<string[]>(['']);
+    const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
@@ -264,7 +265,7 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
             id: Date.now().toString(),
             patientId,
             appointmentId: 'quick',
-            date: new Date().toISOString(),
+            date: new Date(issueDate).toISOString(),
             symptoms: 'Renouvellement Ordonnance / Rapide',
             diagnosis: diagnosis,
             notes: 'Ordonnance rapide',
@@ -281,22 +282,40 @@ const QuickPrescriptionModal = ({ patients, onClose, onSave }: any) => {
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-2xl font-light hover:rotate-90 transition-transform">&times;</button>
                 </div>
                 <form onSubmit={handleSave} className="p-8 space-y-5">
-                    <div>
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Patient bénéficiaire</label>
-                        <select 
-                            required 
-                            className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-bold bg-white"
-                            value={patientId}
-                            onChange={e => setPatientId(e.target.value)}
-                        >
-                            <option value="">Sélectionner un patient...</option>
-                            {patients.map((p: Patient) => (
-                                <option key={p.id} value={p.id}>{p.lastName.toUpperCase()} {p.firstName}</option>
-                            ))}
-                        </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Patient bénéficiaire</label>
+                            <select 
+                                required 
+                                className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-bold bg-white"
+                                value={patientId}
+                                onChange={e => setPatientId(e.target.value)}
+                            >
+                                <option value="">Sélectionner un patient...</option>
+                                {patients.map((p: Patient) => (
+                                    <option key={p.id} value={p.id}>{p.lastName.toUpperCase()} {p.firstName}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date d'émission</label>
+                            <div className="relative">
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input 
+                                    type="date"
+                                    value={issueDate}
+                                    onChange={e => setIssueDate(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500 font-black bg-slate-50 transition-all"
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    {/* FORCE TEXTAREA POUR DIAGNOSTIC DANS ORDONNANCE RAPIDE */}
+                    <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center gap-3">
+                        <Info size={14} className="text-indigo-600 shrink-0" />
+                        <p className="text-[10px] font-bold text-indigo-700 italic">La date choisie apparaîtra sur l'ordonnance finale.</p>
+                    </div>
+
                     <div>
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Diagnostic(s)</label>
                         <textarea 

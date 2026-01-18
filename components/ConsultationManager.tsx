@@ -5,7 +5,7 @@ import { Patient, Consultation, Vitals } from '../types';
 import { 
   Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, 
   Download, Eye, Trash2, CheckSquare, Square, MinusSquare, Loader2,
-  Thermometer, Wind, Droplets, TestTube, Scale, Ruler
+  Thermometer, Wind, Droplets, TestTube, Scale, Ruler, Calendar, Info
 } from 'lucide-react';
 import { PrescriptionTemplate } from './PrescriptionTemplate';
 
@@ -26,6 +26,7 @@ export const ConsultationManager: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [prescription, setPrescription] = useState<string[]>([]);
   const [diagnosis, setDiagnosis] = useState('');
+  const [consultationDate, setConsultationDate] = useState(new Date().toISOString().split('T')[0]);
   
   // Vitals State
   const [vitals, setVitals] = useState<Vitals>({
@@ -111,7 +112,7 @@ export const ConsultationManager: React.FC = () => {
     const element = document.getElementById('prescription-preview-content');
     const opt = {
       margin: 0,
-      filename: `Ordonnance_${selectedPatient?.lastName || 'Patient'}_${new Date().toISOString().split('T')[0]}.pdf`,
+      filename: `Ordonnance_${selectedPatient?.lastName || 'Patient'}_${consultationDate}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
@@ -130,7 +131,7 @@ export const ConsultationManager: React.FC = () => {
       id: Date.now().toString(),
       patientId: selectedPatient.id,
       appointmentId: 'manual', 
-      date: new Date().toISOString(),
+      date: new Date(consultationDate).toISOString(),
       symptoms,
       diagnosis,
       notes: aiAnalysis,
@@ -222,9 +223,27 @@ export const ConsultationManager: React.FC = () => {
                 {activeTab === 'new' && (
                     <div className="space-y-6 animate-fade-in pb-10">
                         
-                        {/* SECTION CONSTANTES VITALE (NEW) */}
-                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <div className="flex items-center gap-2 mb-4">
+                        {/* SECTION DATE & CONSTANTES */}
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-slate-50">
+                                <div>
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                                        <Calendar size={14} className="text-medical-600" /> Date de la visite
+                                    </label>
+                                    <input 
+                                        type="date" 
+                                        value={consultationDate} 
+                                        onChange={(e) => setConsultationDate(e.target.value)}
+                                        className="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-black outline-none focus:ring-2 focus:ring-medical-500 bg-slate-50 transition-all"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold italic pt-4 md:pt-6">
+                                    <Info size={14} className="shrink-0"/>
+                                    Modifier pour enregistrer une consultation passée.
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 mb-4 pt-2">
                                 <Activity size={18} className="text-medical-600" />
                                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-700">Constantes de la visite</h3>
                             </div>
@@ -378,13 +397,13 @@ export const ConsultationManager: React.FC = () => {
       {showPreview && (
           <div className="w-[148mm] shrink-0 bg-white shadow-2xl p-4 overflow-y-auto h-full border border-slate-200 animate-fade-in no-print">
             <div id="prescription-preview-content">
-                <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date()} />
+                <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date(consultationDate)} />
             </div>
           </div>
       )}
       
       <div className="print-only">
-         <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date()} />
+         <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date(consultationDate)} />
       </div>
     </div>
   );
