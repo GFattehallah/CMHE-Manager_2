@@ -7,7 +7,7 @@
     <link rel="icon" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Chargement sécurisé de html2pdf -->
+    <!-- Chargement de html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
       window.process = { 
@@ -49,15 +49,16 @@
       .print-only { display: none; }
       #global-print-portal { display: none; }
       
-      /* Conteneur pour html2pdf : doit être invisible mais présent pour la capture */
-      #dmp-pdf-render-area {
-        position: absolute;
-        left: -9999px;
+      /* Conteneur spécial PDF : invisible mais détectable pour la capture */
+      .pdf-capture-container {
+        position: fixed;
+        left: -10000px;
         top: 0;
         width: 210mm;
         background: white;
+        z-index: -9999;
         visibility: visible;
-        z-index: -1000;
+        overflow: visible;
       }
 
       @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -95,9 +96,8 @@
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased overflow-hidden">
     <div id="root"></div>
+    <!-- Portal racine pour l'impression système -->
     <div id="global-print-portal"></div>
-    <!-- Element dédié à la capture PDF -->
-    <div id="dmp-pdf-render-area"></div>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
