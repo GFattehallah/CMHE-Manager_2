@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DataService } from '../services/dataService';
 import { GeminiService } from '../services/geminiService';
-import { Patient, Consultation } from '../types';
-import { Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, Download, Eye, Trash2, CheckSquare, Square, MinusSquare, Loader2 } from 'lucide-react';
+import { Patient, Consultation, Vitals } from '../types';
+import { 
+  Sparkles, Save, Printer, History, FileText, Activity, AlertCircle, Pill, 
+  Download, Eye, Trash2, CheckSquare, Square, MinusSquare, Loader2,
+  Thermometer, Wind, Droplets, TestTube, Scale, Ruler
+} from 'lucide-react';
 import { PrescriptionTemplate } from './PrescriptionTemplate';
 
 export const ConsultationManager: React.FC = () => {
@@ -22,6 +26,18 @@ export const ConsultationManager: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [prescription, setPrescription] = useState<string[]>([]);
   const [diagnosis, setDiagnosis] = useState('');
+  
+  // Vitals State
+  const [vitals, setVitals] = useState<Vitals>({
+    temperature: '',
+    bloodPressure: '',
+    heartRate: '',
+    respiratoryRate: '',
+    oximetry: '',
+    urinaryStrip: '',
+    weight: '',
+    height: ''
+  });
 
   useEffect(() => {
     const loadPatients = async () => {
@@ -39,6 +55,21 @@ export const ConsultationManager: React.FC = () => {
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       setConsultationHistory(patientHistory);
       setSelectedIds([]);
+      
+      // Pré-remplir les vitals avec les dernières connues du patient
+      const p = patients.find(pat => pat.id === selectedPatientId);
+      if (p) {
+        setVitals({
+          temperature: p.temperature || '',
+          bloodPressure: p.bloodPressure || '',
+          heartRate: p.heartRate || '',
+          respiratoryRate: p.respiratoryRate || '',
+          oximetry: p.oximetry || '',
+          urinaryStrip: p.urinaryStrip || '',
+          weight: p.weight || '',
+          height: p.height || ''
+        });
+      }
     } else {
       setConsultationHistory([]);
       setSelectedIds([]);
@@ -47,7 +78,7 @@ export const ConsultationManager: React.FC = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [selectedPatientId]);
+  }, [selectedPatientId, patients]);
 
   const selectedPatient = patients.find(p => p.id === selectedPatientId);
 
@@ -103,13 +134,21 @@ export const ConsultationManager: React.FC = () => {
       symptoms,
       diagnosis,
       notes: aiAnalysis,
-      prescription
+      prescription,
+      vitals
     };
 
     try {
         await DataService.saveConsultation(newConsultation);
+        
+        // Mettre à jour les constantes sur le profil patient aussi
+        await DataService.savePatient({
+            ...selectedPatient,
+            ...vitals
+        });
+
         await loadHistory();
-        alert('Consultation sauvegardée avec succès !');
+        alert('Consultation et constantes sauvegardées avec succès !');
         setSymptoms('');
         setAiAnalysis('');
         setPrescription([]);
@@ -120,56 +159,15 @@ export const ConsultationManager: React.FC = () => {
     }
   };
 
-  const handleDeleteConsultation = async (id: string) => {
-    if (window.confirm('Voulez-vous vraiment supprimer cette consultation ?')) {
-      setIsDeleting(true);
-      try {
-          await DataService.deleteConsultation(id);
-          setConsultationHistory(prev => prev.filter(c => c.id !== id));
-      } catch (err) {
-          alert("Erreur lors de la suppression.");
-      } finally {
-          setIsDeleting(false);
-      }
-    }
-  };
-
-  const handleDeleteBulk = async () => {
-    if (selectedIds.length === 0) return;
-    if (window.confirm(`Voulez-vous vraiment supprimer les ${selectedIds.length} consultations sélectionnées ?`)) {
-      setIsDeleting(true);
-      try {
-          await DataService.deleteConsultationsBulk(selectedIds);
-          setConsultationHistory(prev => prev.filter(c => !selectedIds.includes(c.id)));
-          setSelectedIds([]);
-          alert("Sélection supprimée.");
-      } catch (err) {
-          alert("Erreur lors de la suppression groupée.");
-      } finally {
-          setIsDeleting(false);
-      }
-    }
-  };
-
-  const handleToggleSelect = (id: string) => {
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedIds.length === consultationHistory.length && consultationHistory.length > 0) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(consultationHistory.map(c => c.id));
-    }
+  const updateVital = (field: keyof Vitals, value: string) => {
+    setVitals(prev => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="p-6 flex flex-col lg:flex-row gap-6 h-[calc(100vh-80px)] relative overflow-hidden">
       
-      {/* LEFT PANEL: Controls & Inputs */}
       <div className="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden no-print">
         
-        {/* Header / Patient Selection */}
         <div className="p-4 border-b border-slate-100 bg-slate-50">
            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Dossier Patient</label>
            <div className="flex gap-2">
@@ -180,29 +178,28 @@ export const ConsultationManager: React.FC = () => {
             >
                 <option value="">-- Rechercher un patient --</option>
                 {patients.map(p => (
-                <option key={p.id} value={p.id}>{p.lastName} {p.firstName} (Né le {new Date(p.birthDate).getFullYear()})</option>
+                <option key={p.id} value={p.id}>{p.lastName} {p.firstName} (CIN: {p.cin})</option>
                 ))}
             </select>
-            <button className="bg-white border border-slate-300 p-2 rounded-lg text-slate-500 hover:text-medical-600 hover:border-medical-600 transition">
+            <button onClick={loadHistory} className="bg-white border border-slate-300 p-2 rounded-lg text-slate-500 hover:text-medical-600 hover:border-medical-600 transition">
                 <History size={20}/>
             </button>
            </div>
            
            {selectedPatient && (
-             <div className="mt-3 flex gap-4 text-sm">
+             <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                <span className="flex items-center gap-1 text-slate-600">
+                    <AlertCircle size={14} className="text-orange-500"/> 
+                    Allergies: <strong className="text-rose-600">{selectedPatient.allergies.length ? selectedPatient.allergies.join(', ') : 'Aucune'}</strong>
+                </span>
                 <span className="flex items-center gap-1 text-slate-600">
                     <Activity size={14} className="text-red-500"/> 
                     Antécédents: <strong>{selectedPatient.medicalHistory.length ? selectedPatient.medicalHistory.join(', ') : 'Aucun'}</strong>
-                </span>
-                <span className="flex items-center gap-1 text-slate-600">
-                    <AlertCircle size={14} className="text-orange-500"/> 
-                    Allergies: <strong>{selectedPatient.allergies.length ? selectedPatient.allergies.join(', ') : 'Aucune'}</strong>
                 </span>
              </div>
            )}
         </div>
 
-        {/* Tabs */}
         {selectedPatient ? (
         <>
             <div className="flex border-b border-slate-200">
@@ -220,11 +217,29 @@ export const ConsultationManager: React.FC = () => {
                 </button>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 custom-scrollbar">
                 
                 {activeTab === 'new' && (
-                    <div className="space-y-6 animate-fade-in">
+                    <div className="space-y-6 animate-fade-in pb-10">
+                        
+                        {/* SECTION CONSTANTES VITALE (NEW) */}
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Activity size={18} className="text-medical-600" />
+                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-700">Constantes de la visite</h3>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <VitalInput icon={Thermometer} label="Temp (°C)" value={vitals.temperature} onChange={(v) => updateVital('temperature', v)} placeholder="37.0" />
+                                <VitalInput icon={Activity} label="Tension (mmHg)" value={vitals.bloodPressure} onChange={(v) => updateVital('bloodPressure', v)} placeholder="120/80" />
+                                <VitalInput icon={Activity} label="F.C (bpm)" value={vitals.heartRate} onChange={(v) => updateVital('heartRate', v)} placeholder="75" />
+                                <VitalInput icon={Wind} label="F.R (cpm)" value={vitals.respiratoryRate} onChange={(v) => updateVital('respiratoryRate', v)} placeholder="16" />
+                                <VitalInput icon={Droplets} label="SpO2 (%)" value={vitals.oximetry} onChange={(v) => updateVital('oximetry', v)} placeholder="98" />
+                                <VitalInput icon={Scale} label="Poids (kg)" value={vitals.weight} onChange={(v) => updateVital('weight', v)} placeholder="70" />
+                                <VitalInput icon={Ruler} label="Taille (cm)" value={vitals.height} onChange={(v) => updateVital('height', v)} placeholder="175" />
+                                <VitalInput icon={TestTube} label="B.U" value={vitals.urinaryStrip} onChange={(v) => updateVital('urinaryStrip', v)} placeholder="Glu-, Prot-" />
+                            </div>
+                        </div>
+
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <label className="block text-sm font-medium text-slate-700 mb-2">Symptômes & Motif</label>
                             <textarea 
@@ -237,26 +252,25 @@ export const ConsultationManager: React.FC = () => {
                                 <button 
                                     onClick={handleAIAnalysis}
                                     disabled={isAnalyzing || !symptoms}
-                                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg flex items-center gap-2 transition disabled:opacity-50"
+                                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg flex items-center gap-2 transition disabled:opacity-50 font-bold"
                                 >
                                     <Sparkles size={16} />
-                                    {isAnalyzing ? 'Analyse...' : 'Analyser avec IA'}
+                                    {isAnalyzing ? 'Analyse...' : 'Analyse Gemini'}
                                 </button>
                             </div>
                             {aiAnalysis && (
                                 <div className="mt-3 p-3 bg-indigo-50/50 rounded-lg border border-indigo-100 text-sm text-slate-700 leading-relaxed">
-                                    <div className="font-semibold text-indigo-800 mb-1 flex items-center gap-2"><Sparkles size={12}/> Suggestion Gemini</div>
+                                    <div className="font-semibold text-indigo-800 mb-1 flex items-center gap-2"><Sparkles size={12}/> Diagnostic Différentiel</div>
                                     <div className="whitespace-pre-wrap">{aiAnalysis}</div>
                                 </div>
                             )}
                         </div>
 
-                        {/* DIAGNOSTIC : CHAMP TEXTAREA FORCE AVEC HAUTEUR ET REDIMENSIONNEMENT */}
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Diagnostic(s)</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Diagnostic Final</label>
                             <textarea 
-                                className="w-full p-3 border border-slate-200 rounded-lg h-32 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-y font-medium"
-                                placeholder="Saisissez le diagnostic médical détaillé (plusieurs lignes possibles)..."
+                                className="w-full p-3 border border-slate-200 rounded-lg h-24 focus:ring-2 focus:ring-medical-500 outline-none text-slate-700 resize-y font-bold"
+                                placeholder="Diagnostic retenu..."
                                 value={diagnosis}
                                 onChange={(e) => setDiagnosis(e.target.value)}
                             />
@@ -264,22 +278,20 @@ export const ConsultationManager: React.FC = () => {
                                 <button 
                                     onClick={handleGeneratePrescription}
                                     className="text-xs bg-medical-50 text-medical-700 px-3 py-1.5 rounded-lg hover:bg-medical-100 transition flex items-center gap-2 font-bold"
-                                    title="Suggérer ordonnance"
                                 >
-                                    <Pill size={14} /> Suggérer Ordonnance
+                                    <Pill size={14} /> Suggérer Traitement
                                 </button>
                             </div>
                         </div>
 
                         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div className="flex justify-between items-center mb-2">
-                                <label className="block text-sm font-medium text-slate-700">Médicaments</label>
-                                <button onClick={() => setPrescription([...prescription, ''])} className="text-xs text-medical-600 font-medium hover:underline">+ Ajouter</button>
+                                <label className="block text-sm font-medium text-slate-700">Ordonnance</label>
+                                <button onClick={() => setPrescription([...prescription, ''])} className="text-xs text-medical-600 font-bold hover:underline">+ Ajouter Médicament</button>
                             </div>
-                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                            <div className="space-y-2">
                                 {prescription.map((med, idx) => (
                                 <div key={idx} className="flex gap-2 group">
-                                    <span className="w-6 flex items-center justify-center text-slate-300 text-xs">{idx + 1}</span>
                                     <input 
                                         value={med} 
                                         onChange={(e) => {
@@ -287,112 +299,65 @@ export const ConsultationManager: React.FC = () => {
                                             newPresc[idx] = e.target.value;
                                             setPrescription(newPresc);
                                         }}
-                                        className="flex-1 p-2 border border-slate-200 rounded-lg text-sm focus:border-medical-500 outline-none"
-                                        placeholder="Nom du médicament, dosage, fréquence..."
+                                        className="flex-1 p-2 border border-slate-200 rounded-lg text-sm focus:border-medical-500 outline-none font-medium"
+                                        placeholder="Médicament, dosage..."
                                     />
-                                    <button onClick={() => setPrescription(prescription.filter((_, i) => i !== idx))} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
-                                        &times;
-                                    </button>
+                                    <button onClick={() => setPrescription(prescription.filter((_, i) => i !== idx))} className="text-slate-300 hover:text-red-500">&times;</button>
                                 </div>
                                 ))}
-                                {prescription.length === 0 && <p className="text-xs text-slate-400 italic text-center py-2">Aucun médicament prescrit.</p>}
                             </div>
                         </div>
 
                         <div className="pt-2 flex gap-3 pb-8">
-                            <button onClick={handleSave} className="flex-1 bg-medical-600 text-white py-3 rounded-lg hover:bg-medical-700 shadow-md flex items-center justify-center gap-2 font-medium transition">
-                                <Save size={18} /> Enregistrer
+                            <button onClick={handleSave} className="flex-1 bg-medical-600 text-white py-3 rounded-xl hover:bg-medical-700 shadow-md flex items-center justify-center gap-2 font-bold transition">
+                                <Save size={18} /> Enregistrer Consultation
                             </button>
-                            <div className="h-full w-px bg-slate-200 mx-1"></div>
-                            <button onClick={() => setShowPreview(!showPreview)} className={`px-4 py-3 rounded-lg shadow-sm flex items-center justify-center gap-2 transition border ${showPreview ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`} title={showPreview ? "Masquer l'aperçu" : "Voir l'aperçu"}><Eye size={18} /></button>
-                            <button onClick={handleDownloadPDF} className="px-4 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 shadow-md flex items-center justify-center gap-2 transition" title="Télécharger PDF"><Download size={18} /></button>
-                            <button onClick={handlePrint} className="px-4 bg-slate-800 text-white py-3 rounded-lg hover:bg-slate-900 shadow-md flex items-center justify-center gap-2 transition" title="Imprimer"><Printer size={18} /></button>
+                            <button onClick={() => setShowPreview(!showPreview)} className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition"><Eye size={18} /></button>
+                            <button onClick={handleDownloadPDF} className="px-4 bg-rose-600 text-white py-3 rounded-xl hover:bg-rose-700 shadow-md transition"><Download size={18} /></button>
                         </div>
                     </div>
                 )}
 
                 {activeTab === 'history' && (
                     <div className="space-y-4 animate-fade-in pb-16">
-                        <div className="flex justify-between items-center mb-4 px-2 bg-white p-3 rounded-xl border border-slate-100 shadow-sm sticky top-0 z-20">
-                           <button onClick={handleSelectAll} className="text-xs font-bold text-slate-600 flex items-center gap-3 hover:text-medical-600 transition-all bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
-                             {selectedIds.length === consultationHistory.length && consultationHistory.length > 0 ? (
-                               <CheckSquare size={18} className="text-medical-600" />
-                             ) : selectedIds.length > 0 ? (
-                               <MinusSquare size={18} className="text-medical-400" />
-                             ) : (
-                               <Square size={18} />
-                             )}
-                             {selectedIds.length > 0 ? `Désélectionner (${selectedIds.length})` : 'Sélectionner tout'}
-                           </button>
-                           {isDeleting && (
-                             <div className="flex items-center gap-2 text-rose-600 font-black uppercase text-[10px] tracking-widest animate-pulse">
-                               <Loader2 size={12} className="animate-spin" /> Mise à jour...
-                             </div>
-                           )}
-                        </div>
-
                         {consultationHistory.length === 0 ? (
-                            <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-slate-100 border-dashed">
+                            <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
                                 <History size={48} className="mx-auto mb-2 opacity-20"/>
-                                <p className="font-bold uppercase tracking-widest text-[10px]">Aucun historique de consultation.</p>
+                                <p className="font-bold uppercase tracking-widest text-[10px]">Aucune visite enregistrée.</p>
                             </div>
                         ) : (
                             consultationHistory.map((consult) => (
-                                <div 
-                                    key={consult.id} 
-                                    className={`relative bg-white p-5 rounded-2xl border transition-all duration-300 group ${selectedIds.includes(consult.id) ? 'border-medical-500 shadow-xl ring-2 ring-medical-500/10' : 'border-slate-200 shadow-sm hover:border-slate-300'}`}
-                                >
-                                    {/* Select Checkbox */}
-                                    <button 
-                                      type="button"
-                                      onClick={(e) => { e.stopPropagation(); handleToggleSelect(consult.id); }}
-                                      className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 text-slate-300 hover:text-medical-600 transition-colors cursor-pointer"
-                                    >
-                                      {selectedIds.includes(consult.id) ? <CheckSquare size={24} className="text-medical-600"/> : <Square size={24}/>}
-                                    </button>
-
-                                    <div className="flex justify-between items-start mb-2 pl-12">
-                                        <div className="flex items-center gap-3 text-medical-700 font-bold">
-                                            <CalendarIcon date={consult.date} />
-                                            <div className="flex flex-col">
-                                                <span className="text-sm capitalize">{new Date(consult.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                                <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded w-fit font-black">À {new Date(consult.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                <div key={consult.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-medical-300 transition-all">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-medical-50 text-medical-600 rounded-lg flex items-center justify-center font-bold text-xs uppercase text-center flex-col">
+                                                <span>{new Date(consult.date).getDate()}</span>
+                                                <span className="text-[8px]">{new Date(consult.date).toLocaleString('fr-FR', {month: 'short'})}</span>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-black text-slate-800 uppercase">{consult.diagnosis}</h4>
+                                                <p className="text-[10px] text-slate-400 font-bold">{new Date(consult.date).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <button 
-                                              type="button"
-                                              onClick={(e) => { e.stopPropagation(); handleDeleteConsultation(consult.id); }}
-                                              className="p-2.5 text-rose-500 hover:text-white hover:bg-rose-600 bg-white border border-rose-100 rounded-xl transition-all shadow-sm flex items-center justify-center cursor-pointer"
-                                              title="Supprimer cette consultation"
-                                            >
-                                              <Trash2 size={20} />
-                                            </button>
+                                    </div>
+                                    
+                                    {consult.vitals && (
+                                        <div className="grid grid-cols-4 gap-2 mb-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                            {consult.vitals.temperature && <div className="text-[9px] font-bold text-slate-500">T°: <span className="text-orange-600">{consult.vitals.temperature}°C</span></div>}
+                                            {consult.vitals.bloodPressure && <div className="text-[9px] font-bold text-slate-500">TA: <span className="text-rose-600">{consult.vitals.bloodPressure}</span></div>}
+                                            {consult.vitals.heartRate && <div className="text-[9px] font-bold text-slate-500">FC: <span className="text-red-600">{consult.vitals.heartRate}</span></div>}
+                                            {consult.vitals.oximetry && <div className="text-[9px] font-bold text-slate-500">SpO2: <span className="text-cyan-600">{consult.vitals.oximetry}%</span></div>}
                                         </div>
-                                    </div>
-                                    <div className="mb-3 pl-12">
-                                        <p className="text-sm text-slate-800 font-black mb-1">Diagnostic(s):</p>
-                                        {/* Utilisation de whitespace-pre-wrap pour respecter les sauts de ligne */}
-                                        <p className="text-xs text-indigo-700 font-bold bg-indigo-50 p-2 rounded-lg border border-indigo-100 mb-2 whitespace-pre-wrap leading-relaxed">
-                                            {consult.diagnosis}
-                                        </p>
-                                        <p className="text-xs text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg italic whitespace-pre-wrap italic">
-                                            "{consult.symptoms}"
-                                        </p>
-                                    </div>
-                                    <div className="bg-slate-900/5 p-4 rounded-xl text-xs text-slate-600 ml-12 border border-slate-100">
-                                        <div className="font-black mb-2 text-slate-400 uppercase tracking-[0.2em] text-[9px] flex items-center gap-2"><Pill size={12}/> Traitement prescrit</div>
-                                        <ul className="space-y-1.5">
-                                            {consult.prescription && consult.prescription.length > 0 ? (
-                                              consult.prescription.map((med, i) => (
-                                                  <li key={i} className="flex items-start gap-2 font-bold text-slate-700">
-                                                      <span className="text-medical-500 mt-1">•</span> {med}
-                                                  </li>
-                                              ))
-                                            ) : (
-                                              <li className="text-slate-400 italic">Aucune prescription</li>
-                                            )}
-                                        </ul>
+                                    )}
+
+                                    <p className="text-xs text-slate-600 italic border-l-2 border-slate-100 pl-3 mb-3 leading-relaxed">"{consult.symptoms}"</p>
+                                    
+                                    <div className="flex flex-wrap gap-1">
+                                        {consult.prescription.map((m, i) => (
+                                            <span key={i} className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md border border-indigo-100 flex items-center gap-1">
+                                                <Pill size={10}/> {m}
+                                            </span>
+                                        ))}
                                     </div>
                                 </div>
                             ))
@@ -403,51 +368,21 @@ export const ConsultationManager: React.FC = () => {
         </>
         ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8">
-                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100 shadow-inner">
-                    <UserIcon />
-                </div>
+                <FileText size={64} className="mb-4 opacity-10" />
                 <p className="text-lg font-black text-slate-800 uppercase tracking-tighter">Aucun patient sélectionné</p>
-                <p className="text-xs font-medium text-slate-400 mt-1">Recherchez un dossier patient pour commencer une consultation.</p>
+                <p className="text-xs font-medium text-slate-400 mt-1 text-center max-w-xs">Veuillez sélectionner un dossier patient pour initier la consultation et la prise de constantes.</p>
             </div>
         )}
       </div>
 
-      {/* Floating Bulk Delete Action Bar */}
-      {selectedIds.length > 0 && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-4 animate-fade-in no-print">
-          <div className="bg-slate-900 text-white p-4 rounded-[2.5rem] shadow-2xl flex items-center justify-between border border-white/10 backdrop-blur-md bg-opacity-95 ring-1 ring-white/20">
-            <div className="flex items-center gap-4 pl-4">
-              <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/20">{selectedIds.length}</div>
-              <div>
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-300">Consultations</p>
-                 <p className="text-[10px] font-bold text-slate-400 uppercase">Sélectionnées</p>
-              </div>
-            </div>
-            <div className="flex gap-2 pr-2">
-              <button type="button" onClick={() => setSelectedIds([])} className="px-5 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 rounded-2xl transition-all">Annuler</button>
-              <button type="button" onClick={handleDeleteBulk} className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all active:scale-95">
-                <Trash2 size={16} /> Supprimer
-              </button>
+      {showPreview && (
+          <div className="w-[148mm] shrink-0 bg-white shadow-2xl p-4 overflow-y-auto h-full border border-slate-200 animate-fade-in no-print">
+            <div id="prescription-preview-content">
+                <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date()} />
             </div>
           </div>
-        </div>
       )}
-
-      {/* RIGHT PANEL: LIVE PREVIEW */}
-      <div className={`${showPreview ? 'block' : 'hidden'} w-[148mm] shrink-0 bg-white shadow-2xl p-0 overflow-hidden border border-slate-200 relative group transition-all duration-300`}>
-         <div className="absolute top-4 right-4 bg-slate-900 text-white text-[9px] px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 uppercase tracking-[0.2em] font-black shadow-lg">Aperçu A5</div>
-         <div className="h-full overflow-y-auto p-4 origin-top bg-slate-50/20">
-            <div id="prescription-preview-content">
-                <PrescriptionTemplate 
-                    patient={selectedPatient} 
-                    prescription={prescription} 
-                    date={new Date()} 
-                />
-            </div>
-         </div>
-      </div>
       
-      {/* Hidden Print Container */}
       <div className="print-only">
          <PrescriptionTemplate patient={selectedPatient} prescription={prescription} date={new Date()} />
       </div>
@@ -455,16 +390,17 @@ export const ConsultationManager: React.FC = () => {
   );
 };
 
-// Helper Components
-const CalendarIcon = ({ date }: { date: string }) => (
-    <div className="flex flex-col items-center justify-center w-12 h-12 bg-medical-50 text-medical-600 rounded-xl border border-medical-100 shadow-sm shrink-0">
-        <span className="text-[9px] font-black uppercase tracking-widest opacity-60 leading-none">{new Date(date).toLocaleDateString('fr-FR', { month: 'short' })}</span>
-        <span className="text-xl font-black leading-none mt-0.5">{new Date(date).getDate()}</span>
+const VitalInput = ({ icon: Icon, label, value, onChange, placeholder }: any) => (
+    <div className="space-y-1">
+        <label className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider">
+            <Icon size={12} className="text-medical-500" /> {label}
+        </label>
+        <input 
+            type="text" 
+            value={value} 
+            onChange={(e) => onChange(e.target.value)} 
+            placeholder={placeholder}
+            className="w-full p-2 border border-slate-200 rounded-xl text-xs font-black outline-none focus:ring-2 focus:ring-medical-500 transition-all text-slate-700"
+        />
     </div>
-);
-
-const UserIcon = () => (
-    <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    </svg>
 );

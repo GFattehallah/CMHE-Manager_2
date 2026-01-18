@@ -1,4 +1,3 @@
-
 export enum Role {
   ADMIN = 'Administrateur',
   DOCTOR = 'Médecin',
@@ -57,7 +56,18 @@ export const EXPENSE_CATEGORIES: Record<ExpenseCategory, string> = {
   OTHER: 'Divers'
 };
 
-export interface Patient {
+export interface Vitals {
+  temperature?: string;
+  bloodPressure?: string;
+  heartRate?: string;
+  respiratoryRate?: string;
+  oximetry?: string;
+  urinaryStrip?: string;
+  weight?: string;
+  height?: string;
+}
+
+export interface Patient extends Vitals {
   id: string;
   firstName: string;
   lastName: string;
@@ -71,8 +81,6 @@ export interface Patient {
   medicalHistory: string[];
   allergies: string[];
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
-  weight?: string;
-  height?: string;
   createdAt: string;
 }
 
@@ -96,11 +104,7 @@ export interface Consultation {
   notes: string;
   prescription: string[];
   labRequests?: string[];
-  vitals?: {
-    bp?: string;
-    weight?: string;
-    temp?: string;
-  };
+  vitals?: Vitals;
 }
 
 export interface Invoice {

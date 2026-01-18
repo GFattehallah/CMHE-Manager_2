@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, FileText, UserCircle, Loader2, Scale, Ruler } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Plus, Search, Edit2, Trash2, FileText, UserCircle, Loader2, Scale, Ruler, Thermometer, Activity, Wind, Droplets, TestTube, AlertCircle, Database } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { DataService } from '../services/dataService';
 import { Patient } from '../types';
 
@@ -8,8 +8,10 @@ export const PatientManager: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,58 +20,95 @@ export const PatientManager: React.FC = () => {
 
   const loadPatients = async () => {
     setIsLoading(true);
-    const data = await DataService.getPatients();
-    setPatients([...data]);
-    setIsLoading(false);
+    try {
+      const data = await DataService.getPatients();
+      setPatients([...data]);
+    } catch (err) {
+      console.error("Load Patients Error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    setIsSaving(true);
+    
     const formData = new FormData(e.currentTarget);
     
-    const medicalHistoryRaw = (formData.get('medicalHistory') as string) ?? "";
-    const allergiesRaw = (formData.get('allergies') as string) ?? "";
+    // Fonction utilitaire pour nettoyer les valeurs
+    const clean = (val: any): string | null => {
+        if (val === undefined || val === null) return null;
+        const str = val.toString().trim();
+        return str === "" ? null : str;
+    };
+
+    const medicalHistoryRaw = clean(formData.get('medicalHistory')) || "";
+    const allergiesRaw = clean(formData.get('allergies')) || "";
 
     const newPatient: Patient = {
       id: editingPatient ? editingPatient.id : `P-${Date.now()}`,
-      firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string,
+      firstName: clean(formData.get('firstName')) || "Prénom",
+      lastName: (clean(formData.get('lastName')) || "NOM").toUpperCase(),
       birthDate: formData.get('birthDate') as string,
-      phone: formData.get('phone') as string,
-      email: formData.get('email') as string,
-      cin: formData.get('cin') as string,
+      phone: clean(formData.get('phone')) || "",
+      email: (clean(formData.get('email')))?.toLowerCase() || null,
+      cin: (clean(formData.get('cin')))?.toUpperCase() || null,
       insuranceType: formData.get('insuranceType') as any,
-      insuranceNumber: formData.get('insuranceNumber') as string,
-      address: formData.get('address') as string,
+      insuranceNumber: clean(formData.get('insuranceNumber')) || "",
+      address: clean(formData.get('address')) || "",
       medicalHistory: medicalHistoryRaw.split(',').map(s => s.trim()).filter(s => s),
       allergies: allergiesRaw.split(',').map(s => s.trim()).filter(s => s),
       bloodType: formData.get('bloodType') as any,
-      weight: formData.get('weight') as string,
-      height: formData.get('height') as string,
+      weight: clean(formData.get('weight')),
+      height: clean(formData.get('height')),
+      temperature: clean(formData.get('temperature')),
+      bloodPressure: clean(formData.get('bloodPressure')),
+      heartRate: clean(formData.get('heartRate')),
+      respiratoryRate: clean(formData.get('respiratoryRate')),
+      oximetry: clean(formData.get('oximetry')),
+      urinaryStrip: clean(formData.get('urinaryStrip')),
       createdAt: editingPatient ? editingPatient.createdAt : new Date().toISOString()
     };
 
-    setPatients(prev => {
-      const idx = prev.findIndex(p => p.id === newPatient.id);
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = newPatient;
-        return next;
-      }
-      return [newPatient, ...prev];
-    });
+    try {
+      await DataService.savePatient(newPatient);
+      
+      setIsModalOpen(false);
+      setEditingPatient(null);
+      
+      // Mise à jour locale immédiate pour réactivité
+      setPatients(prev => {
+        const idx = prev.findIndex(p => p.id === newPatient.id);
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = newPatient;
+          return next;
+        }
+        return [newPatient, ...prev];
+      });
 
-    await DataService.savePatient(newPatient);
-    setIsModalOpen(false);
-    setEditingPatient(null);
-    
-    setTimeout(() => loadPatients(), 500);
+      // Rafraîchissement complet après un court délai
+      setTimeout(() => loadPatients(), 300);
+    } catch (err: any) {
+      // Transformation robuste de l'erreur en string pour l'affichage UI
+      console.error("Erreur capturée dans l'UI:", err);
+      const errorMessage = err?.message || (typeof err === 'string' ? err : "Une erreur inconnue est survenue.");
+      setError(errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Confirmer la suppression de ce patient ?')) {
-      setPatients(prev => prev.filter(p => p.id !== id));
-      await DataService.deletePatient(id);
+      try {
+        await DataService.deletePatient(id);
+        setPatients(prev => prev.filter(p => p.id !== id));
+      } catch (err: any) {
+        alert("Erreur lors de la suppression : " + (err.message || "Erreur inconnue"));
+      }
     }
   };
 
@@ -87,7 +126,7 @@ export const PatientManager: React.FC = () => {
           <p className="text-slate-500 font-medium">Répertoire complet des dossiers médicaux</p>
         </div>
         <button 
-          onClick={() => { setEditingPatient(null); setIsModalOpen(true); }}
+          onClick={() => { setError(null); setEditingPatient(null); setIsModalOpen(true); }}
           className="bg-medical-600 hover:bg-medical-700 text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition shadow-lg shadow-medical-100 font-bold"
         >
           <Plus size={20} /> Nouveau Patient
@@ -172,7 +211,7 @@ export const PatientManager: React.FC = () => {
                         <UserCircle size={18} /> Dossier
                       </button>
                       <button 
-                        onClick={() => { setEditingPatient(patient); setIsModalOpen(true); }}
+                        onClick={() => { setError(null); setEditingPatient(patient); setIsModalOpen(true); }}
                         className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl transition shadow-none hover:shadow-sm"
                       >
                         <Edit2 size={18} />
@@ -194,7 +233,7 @@ export const PatientManager: React.FC = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in border border-slate-200">
             <div className="p-6 bg-slate-900 text-white flex justify-between items-center">
               <h2 className="text-sm font-black uppercase tracking-widest">
                 {editingPatient ? 'Modifier Dossier' : 'Nouveau Dossier Patient'}
@@ -203,6 +242,26 @@ export const PatientManager: React.FC = () => {
             </div>
             
             <form onSubmit={handleSave} className="p-8 space-y-5 overflow-y-auto custom-scrollbar">
+              {error && (
+                <div className="bg-rose-50 border border-rose-100 text-rose-700 p-5 rounded-2xl animate-fade-in shadow-sm">
+                  <div className="flex items-start gap-4 mb-4">
+                    <AlertCircle className="shrink-0 mt-0.5 text-rose-600" size={20} />
+                    <div className="space-y-1">
+                        <p className="text-xs font-black uppercase tracking-widest text-rose-800">Échec de synchronisation Cloud</p>
+                        <p className="text-[11px] font-bold leading-relaxed">{error}</p>
+                    </div>
+                  </div>
+                  {error.includes("STRUCTURE SQL") && (
+                    <div className="mt-4 p-4 bg-white/60 border border-rose-200 rounded-xl flex flex-col gap-3">
+                        <p className="text-[10px] font-black text-rose-900 uppercase">Action Requise :</p>
+                        <Link to="/maintenance" onClick={() => setIsModalOpen(false)} className="bg-rose-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-rose-700 transition">
+                            <Database size={14}/> Aller vers Migration & Backup
+                        </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Prénom</label>
@@ -221,7 +280,7 @@ export const PatientManager: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">CIN</label>
-                  <input name="cin" defaultValue={editingPatient?.cin} required className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none" />
+                  <input name="cin" defaultValue={editingPatient?.cin} placeholder="A123456" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none" />
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Groupe Sang.</label>
@@ -232,32 +291,61 @@ export const PatientManager: React.FC = () => {
                 </div>
               </div>
 
-              {/* CHAMPS BIOMÉTRIQUES AJOUTÉS ICI */}
-              <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
-                    <Scale size={12} className="text-medical-500"/> Poids (kg)
-                  </label>
-                  <input 
-                    type="number" 
-                    step="0.1" 
-                    name="weight" 
-                    defaultValue={editingPatient?.weight} 
-                    placeholder="ex: 75.5"
-                    className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" 
-                  />
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Examen Clinique de base</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Scale size={12} className="text-medical-500"/> Poids (kg)
+                    </label>
+                    <input type="text" name="weight" defaultValue={editingPatient?.weight} placeholder="ex: 75.5" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Ruler size={12} className="text-medical-500"/> Taille (cm)
+                    </label>
+                    <input type="text" name="height" defaultValue={editingPatient?.height} placeholder="ex: 175" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Thermometer size={12} className="text-orange-500"/> Température (°C)
+                    </label>
+                    <input type="text" name="temperature" defaultValue={editingPatient?.temperature} placeholder="ex: 37.2" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Activity size={12} className="text-rose-500"/> Tension (mmHg)
+                    </label>
+                    <input type="text" name="bloodPressure" defaultValue={editingPatient?.bloodPressure} placeholder="ex: 120/80" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Activity size={12} className="text-red-500"/> F.C (bpm)
+                    </label>
+                    <input type="text" name="heartRate" defaultValue={editingPatient?.heartRate} placeholder="bpm" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Wind size={12} className="text-blue-500"/> F.R (cpm)
+                    </label>
+                    <input type="text" name="respiratoryRate" defaultValue={editingPatient?.respiratoryRate} placeholder="cpm" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                      <Droplets size={12} className="text-cyan-500"/> SpO2 (%)
+                    </label>
+                    <input type="text" name="oximetry" defaultValue={editingPatient?.oximetry} placeholder="%" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
+                  </div>
                 </div>
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
-                    <Ruler size={12} className="text-medical-500"/> Taille (cm)
+                    <TestTube size={12} className="text-amber-600"/> Bandelettes Urinaires
                   </label>
-                  <input 
-                    type="number" 
-                    name="height" 
-                    defaultValue={editingPatient?.height} 
-                    placeholder="ex: 175"
-                    className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" 
-                  />
+                  <input type="text" name="urinaryStrip" defaultValue={editingPatient?.urinaryStrip} placeholder="ex: Glu -, Prot +, Leu ++" className="w-full p-3 border border-slate-200 rounded-xl font-black outline-none focus:ring-2 focus:ring-medical-500" />
                 </div>
               </div>
 
@@ -305,7 +393,18 @@ export const PatientManager: React.FC = () => {
 
               <div className="pt-6 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 text-slate-400 font-black uppercase text-[10px] hover:bg-slate-50 rounded-2xl transition">Annuler</button>
-                <button type="submit" className="flex-[2] py-4 bg-medical-600 text-white font-black uppercase text-[10px] rounded-2xl shadow-xl shadow-medical-100 hover:bg-medical-700 transition active:scale-95">Valider l'enregistrement</button>
+                <button 
+                  type="submit" 
+                  disabled={isSaving}
+                  className="flex-[2] py-4 bg-medical-600 text-white font-black uppercase text-[10px] rounded-2xl shadow-xl shadow-medical-100 hover:bg-medical-700 transition active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Sauvegarde...
+                    </>
+                  ) : "Valider l'enregistrement"}
+                </button>
               </div>
             </form>
           </div>

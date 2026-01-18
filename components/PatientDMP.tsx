@@ -5,7 +5,7 @@ import {
   Pill, ChevronLeft, Clock, Loader2, Info, 
   LayoutDashboard, History, Receipt, ArrowRight,
   TrendingUp, CheckCircle2, Wallet, FileCode, Heart, Bookmark,
-  Scale, Ruler
+  Scale, Ruler, Thermometer, Wind, Droplets, TestTube
 } from 'lucide-react';
 import { DataService } from '../services/dataService';
 import { AuthService } from '../services/authService';
@@ -168,7 +168,7 @@ export const PatientDMP: React.FC = () => {
                <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
                   <div>
                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><Activity size={14}/> Constantes & Profil</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                            <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Poids / Taille</p>
                            <p className="text-sm font-black">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
@@ -177,10 +177,41 @@ export const PatientDMP: React.FC = () => {
                            <p className="text-[9px] font-black text-slate-500 uppercase mb-1">IMC / Sang</p>
                            <p className="text-sm font-black text-medical-400">{imc || '--'} • <span className="text-rose-400">{patient.bloodType || '--'}</span></p>
                         </div>
-                     </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                           <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><Thermometer size={10}/> Température</p>
+                           <p className="text-sm font-black">{patient.temperature ? `${patient.temperature}°C` : '--'}</p>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                           <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><Activity size={10}/> Tension</p>
+                           <p className="text-sm font-black text-rose-400">{patient.bloodPressure || '--'}</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 mb-4">
+                        <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
+                           <p className="text-[8px] font-black text-slate-500 uppercase mb-1">F.C</p>
+                           <p className="text-xs font-black">{patient.heartRate || '--'}</p>
+                        </div>
+                        <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
+                           <p className="text-[8px] font-black text-slate-500 uppercase mb-1">F.R</p>
+                           <p className="text-xs font-black">{patient.respiratoryRate || '--'}</p>
+                        </div>
+                        <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
+                           <p className="text-[8px] font-black text-slate-500 uppercase mb-1">SpO2</p>
+                           <p className="text-xs font-black text-cyan-400">{patient.oximetry ? `${patient.oximetry}%` : '--'}</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1 flex items-center gap-1"><TestTube size={10}/> Bandelettes Urinaires</p>
+                        <p className="text-xs font-bold text-amber-200">{patient.urinaryStrip || '--'}</p>
+                    </div>
                   </div>
 
-                   <div className="space-y-4">
+                   <div className="space-y-4 pt-4 border-t border-white/5">
                       {/* SECTION ANTÉCÉDENTS - CRITIQUE */}
                       <div className="p-5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
                          <div className="flex justify-between items-center mb-2">

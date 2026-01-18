@@ -74,19 +74,39 @@ export const DMPTemplate: React.FC<DMPTemplateProps> = ({ patient, consultations
         </div>
       </div>
 
-      {/* Constantes Cliniques */}
-      <div className="grid grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-sm">
-          <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Poids / Taille</p>
-          <p className="text-lg font-black text-slate-800">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
+      {/* Constantes Cliniques Étendues */}
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b pb-2">Biométrie</h3>
+           <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Poids / Taille</p>
+                <p className="text-sm font-black">{patient.weight || '--'} kg / {patient.height || '--'} cm</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">IMC / Groupe</p>
+                <p className="text-sm font-black">{imcValue || '--'} / {patient.bloodType || '--'}</p>
+              </div>
+           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-sm">
-          <p className="text-[9px] font-black text-slate-400 uppercase mb-2">IMC / Groupe</p>
-          <p className="text-lg font-black text-medical-600">{imcValue || '--'} • <span className="text-rose-600 font-black">{patient.bloodType || '--'}</span></p>
-        </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-sm">
-          <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Historique</p>
-          <p className="text-lg font-black text-slate-800">{consultations.length} Visites</p>
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b pb-2">Signes Vitaux</h3>
+           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">Temp / Tension</p>
+                <p className="text-xs font-black">{patient.temperature ? `${patient.temperature}°C` : '--'} / {patient.bloodPressure || '--'}</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">SpO2 / B.U</p>
+                <p className="text-xs font-black">
+                  {patient.oximetry ? `${patient.oximetry}%` : '--'} / {patient.urinaryStrip || '--'}
+                </p>
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">F.C / F.R</p>
+                <p className="text-xs font-black">{patient.heartRate || '--'} bpm / {patient.respiratoryRate || '--'} cpm</p>
+              </div>
+           </div>
         </div>
       </div>
 
