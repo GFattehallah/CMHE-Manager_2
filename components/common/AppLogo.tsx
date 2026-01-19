@@ -43,47 +43,28 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, sho
   return (
     <div className={`flex items-center gap-3 ${className}`}>
     /* modif 19012026 */
-    // <div 
-    //    style={{ width: size, height: size }} 
-    //    className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
-    //  >
-    //    {!imageError ? (
-    //      <img 
-    //        src={resolvedUrl} 
-    //        alt="Logo" 
-    //        className="w-full h-full object-contain p-1"
-    //        onError={() => {
-    //          console.warn("AppLogo: Échec du chargement à :", resolvedUrl);
-    //          setImageError(true);
-    //        }}
-    //      />
-    //    ) : (
-    //      <div className="w-full h-full bg-medical-900 text-white flex items-center justify-center font-black text-[10px] uppercase leading-none text-center p-1">
-    //        CMHE
-    //      </div>
-    //    )}
-    //  </div>
-         <div 
-  style={{ maxWidth: typeof size === 'number' ? `${size}em` : size, maxHeight: typeof size === 'number' ? `${size}em` : size }} 
-  className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
->
-  {!imageError ? (
-    <img 
-      src={resolvedUrl} 
-      alt="Logo" 
-      style={{ width: '100%', height: 'auto', display: 'block' }}
-      className="object-contain p-1"
-      onError={() => {
-        console.warn("AppLogo: Échec du chargement à :", resolvedUrl);
-        setImageError(true);
-      }}
-    />
-  ) : (
-    // fallback
-  )}
-</div>
-
+     <div 
+        style={{ width: size, height: size }} 
+        className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
+      >
+        {!imageError ? (
+          <img 
+            src={resolvedUrl} 
+            alt="Logo" 
+            className="w-full h-full object-contain p-1"
+            onError={() => {
+              console.warn("AppLogo: Échec du chargement à :", resolvedUrl);
+              setImageError(true);
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-medical-900 text-white flex items-center justify-center font-black text-[10px] uppercase leading-none text-center p-1">
+            CMHE
+          </div>
+        )}
+      </div>
        /* fin modif 19012026 */
+      
       {showText && (
         <div className="flex flex-col">
           <span className="font-black text-lg text-slate-800 tracking-tighter uppercase leading-tight">CMHE Mgr</span>
