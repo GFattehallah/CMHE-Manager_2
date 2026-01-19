@@ -42,9 +42,8 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, sho
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-    /* modif 19012026 */
-     <div 
-        style={{ width: size, height: size }} 
+      <div 
+        style={{ width: size, height: size }}
         className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
       >
         {!imageError ? (
@@ -63,7 +62,6 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, sho
           </div>
         )}
       </div>
-       /* fin modif 19012026 */
       
       {showText && (
         <div className="flex flex-col">
