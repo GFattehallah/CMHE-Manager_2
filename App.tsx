@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
@@ -5,22 +6,22 @@ import {
   LogOut, Menu, X, ScrollText, Banknote, FileSpreadsheet, Shield, UserCircle, Database,
   Cloud, CloudOff, RefreshCw, AlertTriangle, ExternalLink, Activity, ArrowRight, Heart
 } from 'lucide-react';
-import { Dashboard } from './components/Dashboard';
-import { PatientManager } from './components/PatientManager';
-import { PatientDMP } from './components/PatientDMP';
-import { ConsultationManager } from './components/ConsultationManager';
-import { AppointmentManager } from './components/AppointmentManager';
-import { PrescriptionManager } from './components/PrescriptionManager';
-import { BillingManager } from './components/BillingManager';
-import { FinanceManager } from './components/FinanceManager';
-import { AccountManager } from './components/AccountManager';
-import { ImportPatients } from './components/ImportPatients';
-import { MaintenanceManager } from './components/MaintenanceManager';
-import { LoginPage } from './components/LoginPage';
-import { AuthService } from './services/authService';
-import { isSupabaseConfigured, getConfigurationStatus } from './services/supabase';
-import { User, Permission, Role } from './types';
-import { AppLogo } from './components/common/AppLogo';
+import { Dashboard } from './components/Dashboard.tsx';
+import { PatientManager } from './components/PatientManager.tsx';
+import { PatientDMP } from './components/PatientDMP.tsx';
+import { ConsultationManager } from './components/ConsultationManager.tsx';
+import { AppointmentManager } from './components/AppointmentManager.tsx';
+import { PrescriptionManager } from './components/PrescriptionManager.tsx';
+import { BillingManager } from './components/BillingManager.tsx';
+import { FinanceManager } from './components/FinanceManager.tsx';
+import { AccountManager } from './components/AccountManager.tsx';
+import { ImportPatients } from './components/ImportPatients.tsx';
+import { MaintenanceManager } from './components/MaintenanceManager.tsx';
+import { LoginPage } from './components/LoginPage.tsx';
+import { AuthService } from './services/authService.ts';
+import { isSupabaseConfigured, getConfigurationStatus } from './services/supabase.ts';
+import { User, Permission, Role } from './types.ts';
+import { AppLogo } from './components/common/AppLogo.tsx';
 
 const LandingPage = ({ onGoToLogin }: { onGoToLogin: () => void }) => (
   <div className="min-h-screen bg-slate-50 flex flex-col font-sans">

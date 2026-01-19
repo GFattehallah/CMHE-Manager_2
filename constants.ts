@@ -1,10 +1,11 @@
-import { Patient, Appointment, AppointmentStatus, Invoice, PaymentType, Expense, User, Role, Permission } from './types';
+
+import { Patient, Appointment, AppointmentStatus, Invoice, PaymentType, Expense, User, Role, Permission } from './types.ts';
 
 /**
  * LOGO DU CABINET
- * Utilisation du chemin absolu /logo.png pour garantir la visibilité sur www.gcmhe.ma
+ * Utilisation de "./logo.png" pour forcer la résolution relative au répertoire actuel.
  */
-export const LOGO_URL = "/logo.png";
+export const LOGO_URL = "./logo.png";
 
 // Auth Users
 export const MOCK_USERS: User[] = [

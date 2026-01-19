@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { LOGO_URL } from '../../constants';
+
+import React, { useState, useEffect } from 'react';
+import { LOGO_URL } from '../../constants.ts';
 
 interface AppLogoProps {
   className?: string;
@@ -7,53 +8,60 @@ interface AppLogoProps {
   showText?: boolean;
 }
 
+/**
+ * Composant Logo universel du cabinet.
+ * Résout le chemin de l'image de manière sécurisée et robuste.
+ */
 export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, showText = false }) => {
-  const [hasError, setHasError] = useState(false);
+  
+  const [imageError, setImageError] = useState(false);
+  const [resolvedUrl, setResolvedUrl] = useState<string>(LOGO_URL);
 
-  /**
-   * LOGO DE SECOURS (SVG INTERNE)
-   * Affiché uniquement si le chargement de logo.png échoue.
-   */
-  const CMHE_Logo_Internal = () => (
-    <div 
-      style={{ width: size, height: size }}
-      className="relative flex items-center justify-center bg-white rounded-[30%] shadow-lg border border-slate-100 p-[12%] overflow-hidden shrink-0"
-    >
-      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
-        <defs>
-          <linearGradient id="medicalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0ea5e9" />
-            <stop offset="100%" stopColor="#0284c7" />
-          </linearGradient>
-        </defs>
-        <path 
-          d="M50 10V90M10 50H90" 
-          stroke="url(#medicalGradient)" 
-          strokeWidth="15" 
-          strokeLinecap="round"
-        />
-        <circle cx="50" cy="50" r="6" fill="white" fillOpacity="0.3" />
-      </svg>
-    </div>
-  );
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.location) {
+        // Nettoyage de l'URL de base pour éviter les problèmes avec le routing Hash
+        const href = window.location.href.split('#')[0];
+        
+        if (href && href.startsWith('http')) {
+          // On s'assure que le chemin se termine par un slash pour la résolution relative
+          const base = href.endsWith('/') ? href : href.substring(0, href.lastIndexOf('/') + 1);
+          
+          // On résout "logo.png" par rapport à l'URL actuelle du projet
+          const cleanLogoPath = LOGO_URL.replace('./', '');
+          const url = new URL(cleanLogoPath, base);
+          
+          setResolvedUrl(url.href);
+        }
+      }
+    } catch (e) {
+      console.warn("AppLogo: Erreur de résolution d'URL, repli sur le chemin statique.", e);
+      setResolvedUrl(LOGO_URL);
+    }
+  }, []);
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      {!hasError && LOGO_URL ? (
-        <div 
-          style={{ width: size, height: size }}
-          className="flex items-center justify-center bg-white rounded-[30%] shadow-lg border border-slate-100 p-0 overflow-hidden transition-all hover:shadow-xl shrink-0"
-        >
+      <div 
+        style={{ width: size, height: size }}
+        className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
+      >
+        {!imageError ? (
           <img 
-            src={LOGO_URL} 
-            alt="Logo CMHE" 
-            className="w-full h-full object-contain p-[10%]"
-            onError={() => setHasError(true)}
+            src={resolvedUrl} 
+            alt="Logo" 
+            className="w-full h-full object-contain p-1"
+            onError={() => {
+              console.warn("AppLogo: Échec du chargement à :", resolvedUrl);
+              setImageError(true);
+            }}
           />
-        </div>
-      ) : (
-        <CMHE_Logo_Internal />
-      )}
+        ) : (
+          <div className="w-full h-full bg-medical-900 text-white flex items-center justify-center font-black text-[10px] uppercase leading-none text-center p-1">
+            CMHE
+          </div>
+        )}
+      </div>
       
       {showText && (
         <div className="flex flex-col">
