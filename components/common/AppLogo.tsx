@@ -44,7 +44,18 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, sho
     <div className={`flex items-center gap-3 ${className}`}>
       <div 
         /* style={{ width: size, height: size }} */
-        style={{ width: typeof size === 'number' ? `${size}em` : size, height: 'auto' }}
+/* Modif 19012026*/
+        <div
+  style={{ maxWidth: typeof size === 'number' ? `${size}em` : size, maxHeight: typeof size === 'number' ? `${size}em` : size }}
+>
+  <img
+    src={resolvedUrl}
+    alt="Logo"
+    style={{ width: '100%', height: 'auto' }}
+  />
+</div>
+/*fin modif 19012026 */
+        
         className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
       >
         {!imageError ? (
