@@ -1,20 +1,19 @@
-jsx
+
 import React, { useState, useEffect } from 'react';
 import { LOGO_URL } from '../../constants.ts';
 
 interface AppLogoProps {
   className?: string;
-  // Removed 'size' prop as we will use responsive CSS classes directly
+  size?: number | string;
   showText?: boolean;
 }
 
 /**
  * Composant Logo universel du cabinet.
  * Résout le chemin de l'image de manière sécurisée et robuste.
- * Le logo est maintenant responsive par défaut grâce aux classes Tailwind CSS.
  */
-export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = false }) => {
-
+export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, showText = false }) => {
+  
   const [imageError, setImageError] = useState(false);
   const [resolvedUrl, setResolvedUrl] = useState<string>(LOGO_URL);
 
@@ -23,15 +22,15 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = fal
       if (typeof window !== 'undefined' && window.location) {
         // Nettoyage de l'URL de base pour éviter les problèmes avec le routing Hash
         const href = window.location.href.split('#')[0];
-
+        
         if (href && href.startsWith('http')) {
           // On s'assure que le chemin se termine par un slash pour la résolution relative
           const base = href.endsWith('/') ? href : href.substring(0, href.lastIndexOf('/') + 1);
-
+          
           // On résout "logo.png" par rapport à l'URL actuelle du projet
           const cleanLogoPath = LOGO_URL.replace('./', '');
           const url = new URL(cleanLogoPath, base);
-
+          
           setResolvedUrl(url.href);
         }
       }
@@ -42,17 +41,16 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = fal
   }, []);
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <div
-        // Changed from inline style to responsive Tailwind CSS classes
-        // Example: Base size is 12 (48px), md: size is 16 (64px), lg: size is 20 (80px)
-        className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
+    <div className={`flex items-center gap-3 ${className}`}>   
+      <div 
+        style={{ width: size, height: size }}
+        className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
       >
        {!imageError ? (
-       <img
-        src={resolvedUrl}
-       alt="Logo"
-      className="w-full h-full object-contain p-1" // These classes already ensure the image scales within its container
+       <img 
+        src={resolvedUrl} 
+       alt="Logo" 
+      className="w-full h-full object-contain p-1"
              onError={() => {
             console.warn("AppLogo: Échec du chargement à :", resolvedUrl);
             setImageError(true);
@@ -64,8 +62,8 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = fal
          </div>
         )}
      </div>
-
-
+          
+      
       {showText && (
         <div className="flex flex-col">
           <span className="font-black text-lg text-slate-800 tracking-tighter uppercase leading-tight">CMHE Mgr</span>
