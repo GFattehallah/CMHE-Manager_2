@@ -28,7 +28,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
                 </div>
             </div>
             <div className="flex flex-col items-center justify-center h-full">
-                <AppLogo size={180} />
+                <AppLogo size={120} />
             </div>
             <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
                 <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
