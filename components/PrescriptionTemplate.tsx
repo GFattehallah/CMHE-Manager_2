@@ -20,7 +20,9 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
 
   {/* Infos Médecin FR */}
   <div className="text-left flex flex-col justify-center h-full">
-      <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
+      <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">
+        Dr. Hasnaa El Malki
+      </h1>
       <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
       <div className="text-[7.5px] text-slate-600 leading-normal space-y-0.5 font-sans">
           <p>Lauréate de la Faculté de Médecine de Casablanca</p>
@@ -31,13 +33,15 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
   </div>
 
   {/* Logo Central */}
-  <div className="flex flex-col items-center justify-center h-[160px] w-[160px]">
-      <AppLogo size={160} className="w-full h-full object-contain" />
+  <div className="flex items-center justify-center h-[160px] w-[160px]">
+      <AppLogo />
   </div>
 
   {/* Infos Médecin AR */}
   <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
-      <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
+      <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">
+        الدكتورة حسناء المـالكي
+      </h1>
       <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
       <div className="text-[8.5px] text-slate-600 leading-normal space-y-0.5 font-medium">
           <p>خريجة كلية الطب بالدار البيضاء</p>
@@ -46,8 +50,8 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
           <p className="font-bold text-slate-800">تتبع الحمل</p>
       </div>
   </div>
-</div>
 
+</div>
 
         {/* Patient Info Section */}
         <div className="mb-4 px-1 shrink-0">
