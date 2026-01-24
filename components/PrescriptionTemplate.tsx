@@ -15,39 +15,39 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
   return (
     <div className="h-[210mm] w-[148mm] mx-auto bg-white p-6 flex flex-col font-serif text-slate-900 leading-tight overflow-hidden relative border border-slate-100 box-border" style={{ pageBreakInside: 'avoid' }}>
         
-        {/* Header Section */}
-        <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
-            {/* Infos Médecin FR */}
-            <div className="text-left flex flex-col justify-center h-full">
-                <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
-                <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
-                <div className="text-[7.5px] text-slate-600 leading-normal space-y-0.5 font-sans">
-                    <p>Lauréate de la Faculté de Médecine de Casablanca</p>
-                    <p>Diplômée en Échographie (Marrakech)</p>
-                    <p>Diplômée en Diabétologie (Université Paris 13)</p>
-                    <p className="font-bold text-slate-800 uppercase tracking-tighter">Suivi de Grossesse</p>
-                </div>
-            </div>
+       {/* Header Section */}
+<div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_160px_1fr] items-center gap-4 shrink-0">
 
-            {/* Logo Central */}
-            
-         <div className="flex flex-col items-center justify-center h-full">
-        <AppLogo size={180} className="mb-1" />
-        </div>
+  {/* Infos Médecin FR */}
+  <div className="text-left flex flex-col justify-center h-full">
+      <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
+      <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
+      <div className="text-[7.5px] text-slate-600 leading-normal space-y-0.5 font-sans">
+          <p>Lauréate de la Faculté de Médecine de Casablanca</p>
+          <p>Diplômée en Échographie (Marrakech)</p>
+          <p>Diplômée en Diabétologie (Université Paris 13)</p>
+          <p className="font-bold text-slate-800 uppercase tracking-tighter">Suivi de Grossesse</p>
+      </div>
+  </div>
 
+  {/* Logo Central */}
+  <div className="flex flex-col items-center justify-center h-[160px] w-[160px]">
+      <AppLogo size={160} className="w-full h-full object-contain" />
+  </div>
 
-          {/* Infos Médecin AR */}
-            <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
-                <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
-                <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
-                <div className="text-[8.5px] text-slate-600 leading-normal space-y-0.5 font-medium">
-                    <p>خريجة كلية الطب بالدار البيضاء</p>
-                    <p>دبلوم الفحص بالصدى (مراكش)</p>
-                    <p>دبلوم أمراض السكري (جامعة باريس 13)</p>
-                    <p className="font-bold text-slate-800">تتبع الحمل</p>
-                </div>
-            </div>
-        </div>
+  {/* Infos Médecin AR */}
+  <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
+      <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
+      <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
+      <div className="text-[8.5px] text-slate-600 leading-normal space-y-0.5 font-medium">
+          <p>خريجة كلية الطب بالدار البيضاء</p>
+          <p>دبلوم الفحص بالصدى (مراكش)</p>
+          <p>دبلوم أمراض السكري (جامعة باريس 13)</p>
+          <p className="font-bold text-slate-800">تتبع الحمل</p>
+      </div>
+  </div>
+</div>
+
 
         {/* Patient Info Section */}
         <div className="mb-4 px-1 shrink-0">
