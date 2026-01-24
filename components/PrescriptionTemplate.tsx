@@ -50,8 +50,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
           <p className="font-bold text-slate-800">تتبع الحمل</p>
       </div>
   </div>
-</div>
-
+  </div>
         {/* Patient Info Section */}
         <div className="mb-4 px-1 shrink-0">
             <div className="flex justify-between items-end border-b border-dotted border-slate-300 pb-2">
