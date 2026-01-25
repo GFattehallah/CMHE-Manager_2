@@ -33,9 +33,13 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
   </div>
 
   {/* Logo Central */}
+    {/*
   <div className="flex items-center justify-center h-[160px] w-[160px]">
       <AppLogo />
-  </div>
+  </div> */}
+  <div className="flex justify-center items-start pt-1">
+  <AppLogo className="w-[200px] h-[200px]" />
+</div>
 
   {/* Infos Médecin AR */}
   <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
