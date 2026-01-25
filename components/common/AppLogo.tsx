@@ -45,8 +45,9 @@ interface AppLogoProps {
       <div className={`flex items-start gap-3 ${className}`}>
 
       <div 
-      //  style={{ width: size, height: size }}
-               className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
+        {/*  style={{ width: size, height: size }}*/}
+        {/* className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"*/}
+        <div className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0">
       >
 
        {!imageError ? (
