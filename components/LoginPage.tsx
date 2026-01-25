@@ -40,7 +40,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
           <div className="relative z-10">
             <div className="mb-12">
                {/* Utilisation de AppLogo avec une taille généreuse et un style propre pour le branding */}
-              <AppLogo size={120} className="shadow-2xl shadow-black/40 hover:scale-105 transition" />
+              <AppLogo size={48} className="shadow-2xl shadow-black/40 hover:scale-105 transition" />
             </div>
             <h1 className="text-4xl font-black mb-4 tracking-tighter leading-tight uppercase">CMHE<br/>Manager Pro</h1>
             <p className="text-medical-200 font-medium leading-relaxed">Solution de gestion intelligente pour le cabinet du Dr. Hasnaa El Malki.</p>
