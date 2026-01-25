@@ -11,7 +11,8 @@ interface AppLogoProps {
  * Composant Logo universel du cabinet.
  * Résout le chemin de l'image de manière sécurisée et robuste.
  */
-export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, showText = false }) => {
+// export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, showText = false }) => {
+   export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = false }) => {
   
   const [imageError, setImageError] = useState(false);
   const [resolvedUrl, setResolvedUrl] = useState<string>(LOGO_URL);
@@ -40,11 +41,12 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 48, sho
   }, []);
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>   
+   // <div className={`flex items-center gap-3 ${className}`}>
+      <div className={`flex items-start gap-3 ${className}`}>
+
       <div 
-        style={{ width: size, height: size }}
-       // style={{ width: 80, height: 80 }}
-        className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
+      //  style={{ width: size, height: size }}
+               className="flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden shrink-0 transition-transform hover:scale-105"
       >
 
        {!imageError ? (
