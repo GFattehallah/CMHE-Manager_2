@@ -11,8 +11,8 @@ interface AppLogoProps {
  * Composant Logo universel du cabinet.
  * Résout le chemin de l'image de manière sécurisée et robuste.
  */
- export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 80, showText = false }) => {
-//   export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = false }) => {
+ //export const AppLogo: React.FC<AppLogoProps> = ({ className = "", size = 80, showText = false }) => {
+  export const AppLogo: React.FC<AppLogoProps> = ({ className = "", showText = false }) => {
   
   const [imageError, setImageError] = useState(false);
   const [resolvedUrl, setResolvedUrl] = useState<string>(LOGO_URL);
