@@ -23,9 +23,10 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
       
 
   {/* Infos Médecin FR */}
-  <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5 whitespace-nowrap">
+  <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5 whitespace-nowrap min-w-max">
   Dr. Hasnaa EL MALKI
 </h1>
+
 
 
   {/* Logo Central */}
