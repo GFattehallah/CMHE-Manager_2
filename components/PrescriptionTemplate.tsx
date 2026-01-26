@@ -24,7 +24,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
 
   {/* Infos Médecin FR */}
   <div className="text-left flex flex-col justify-center h-full">
-      <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">
+      <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5 whitespace-nowrap">
         <h2>Dr. Hasnaa EL MALKI</h2>
       </h1>
       <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
