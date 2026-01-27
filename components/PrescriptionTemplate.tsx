@@ -16,9 +16,8 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
     <div className="h-[210mm] w-[148mm] mx-auto bg-white p-6 flex flex-col font-serif text-slate-900 leading-tight overflow-hidden relative border border-slate-100 box-border" style={{ pageBreakInside: 'avoid' }}>
         
        {/* Header Section */}
-      {/* <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_160px_1fr] items-center gap-4 shrink-0"> */}
-      {/*<div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_200px_1fr] items-start gap-4 shrink-0"> */}
-      <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_45mm_1fr] items-start gap-4 shrink-0">
+      
+      <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_140px_1fr] items-start gap-4 shrink-0">
 
       
 
