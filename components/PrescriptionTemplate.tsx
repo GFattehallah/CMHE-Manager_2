@@ -33,7 +33,10 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
 {/* ================= HEADER ================= */}
 
-<div className="grid grid-cols-[1fr_38mm_1fr] items-center gap-4 border-b-2 border-slate-800 pb-2 mb-2">
+<div
+className="grid grid-cols-[1fr_38mm_1fr] border-b-2 border-slate-800 pb-2 mb-3"
+style={{ height: '40mm' }}
+>
 
 {/* FR */}
 <div className="flex flex-col justify-center text-left text-[8.5px] leading-snug">
@@ -53,9 +56,10 @@ Dr. Hasnaa El Malki
 </div>
 
 {/* LOGO */}
-<div className="flex items-center justify-center h-[38mm] w-[38mm]">
+<div className="flex items-center justify-center">
 
-<AppLogo size="100%" />
+<AppLogo size="38mm" />
+
 </div>
 
 {/* AR */}
@@ -76,7 +80,6 @@ Dr. Hasnaa El Malki
 </div>
 
 </div>
-
 {/* ================= PATIENT ================= */}
 
 <div className="border-b border-dotted pb-2 mb-4 text-[10px] flex justify-between">
