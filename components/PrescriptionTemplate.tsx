@@ -53,7 +53,8 @@ Dr. Hasnaa El Malki
 </div>
 
 {/* LOGO */}
-<div className="flex items-center justify-center h-[45mm] w-[45mm]">
+<div className="flex items-center justify-center h-[38mm] w-[38mm]">
+
 <AppLogo size="100%" />
 </div>
 
