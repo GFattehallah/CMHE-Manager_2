@@ -28,14 +28,12 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
   Dr. Hasnaa EL MALKI
 </h1>
 
+{/* Logo Central */}
+<div className="flex items-center justify-center h-[120px] w-[120px]">
+    <AppLogo />
+</div>
 
-
-  {/* Logo Central */}
-    {/*
-  <div className="flex items-center justify-center h-[160px] w-[160px]">
-      <AppLogo />
-  </div> */}
-  <div className="flex justify-center items-start pt-1">
+        <div className="flex justify-center items-start pt-1">
     {/* <AppLogo className="w-[200px] h-[200px]" />*/}
         <AppLogo className="w-[45mm] h-[45mm]" />
 
