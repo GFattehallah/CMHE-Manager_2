@@ -28,7 +28,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ pati
 </h1>
 
 {/* Logo Central */}
-<div className="flex items-center justify-center h-[120px] w-[120px]">
+<div className="flex items-center justify-center h-[140px] w-[140px]">
     <AppLogo />
 </div>
 
