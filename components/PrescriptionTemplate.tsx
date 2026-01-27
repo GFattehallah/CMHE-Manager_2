@@ -8,123 +8,153 @@ interface PrescriptionTemplateProps {
   date: Date;
 }
 
-export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({ patient, prescription, date }) => {
-  const qrData = encodeURIComponent("Dr. Hasnaa El Malki - CMHE Ait Melloul. Tél: 0528241119");
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=0c4a6e`;
+export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
+  patient,
+  prescription,
+  date,
+}) => {
+
+  const qrData = encodeURIComponent(
+    "Dr. Hasnaa El Malki – CMHE Ait Melloul – Tel: 0528241119"
+  );
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}`;
 
   return (
-    <div className="h-[210mm] w-[148mm] mx-auto bg-white p-6 flex flex-col font-serif text-slate-900 leading-tight overflow-hidden relative border border-slate-100 box-border" style={{ pageBreakInside: 'avoid' }}>
-        
-       {/* Header Section */}
-      
-      <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-[1fr_140px_1fr] items-start gap-4 shrink-0">
+    <div
+      className="mx-auto bg-white font-serif text-slate-900 box-border flex flex-col overflow-hidden border"
+      style={{
+        width: '148mm',
+        height: '210mm',
+        padding: '10mm',
+        pageBreakInside: 'avoid'
+      }}
+    >
 
-      
+{/* ================= HEADER ================= */}
 
-  {/* Infos Médecin FR */}
-  <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5 whitespace-nowrap min-w-max overflow-visible">
+<div className="grid grid-cols-[1fr_45mm_1fr] items-center gap-4 border-b-2 border-slate-800 pb-3 mb-3 min-h-[45mm]">
 
-  Dr. Hasnaa EL MALKI
+{/* FR */}
+<div className="flex flex-col justify-center text-left text-[8.5px] leading-snug">
+
+<h1 className="text-[13px] font-bold uppercase">
+Dr. Hasnaa El Malki
 </h1>
 
-{/* Logo Central */}
-<div className="flex items-center justify-center h-[140px] w-[140px]">
-    <AppLogo />
+<p className="italic font-semibold">Médecine Générale</p>
+
+<p>Lauréate Faculté Médecine Casablanca</p>
+<p>Diplôme Échographie – Marrakech</p>
+<p>Diplôme Diabétologie – Paris 13</p>
+
+<p className="font-bold uppercase mt-1">Suivi de Grossesse</p>
+
 </div>
 
-        <div className="flex justify-center items-start pt-1">
-    {/* <AppLogo className="w-[200px] h-[200px]" />*/}
-        <AppLogo className="w-[45mm] h-[45mm]" />
+{/* LOGO */}
+<div className="flex items-center justify-center h-[45mm] w-[45mm]">
+<AppLogo size="100%" />
+</div>
+
+{/* AR */}
+<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-snug">
+
+<h1 className="text-[14px] font-bold">
+الدكتورة حسناء المالكي
+</h1>
+
+<p className="font-semibold">طب عام</p>
+
+<p>خريجة كلية الطب بالدار البيضاء</p>
+<p>دبلوم الفحص بالصدى (مراكش)</p>
+<p>دبلوم أمراض السكري (جامعة باريس 13)</p>
+
+<p className="font-bold mt-1">تتبع الحمل</p>
 
 </div>
 
-  {/* Infos Médecin AR */}
-  <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
-      <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">
-        الدكتورة حسناء المـالكي
-      </h1>
-      <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
-      <div className="text-[8.5px] text-slate-600 leading-normal space-y-0.5 font-medium">
-          <p>خريجة كلية الطب بالدار البيضاء</p>
-          <p>دبلوم الفحص بالصدى (مراكش)</p>
-          <p>دبلوم أمراض السكري (جامعة باريس 13)</p>
-          <p className="font-bold text-slate-800">تتبع الحمل</p>
-      </div>
-  </div>
-  </div>
-        {/* Patient Info Section */}
-        <div className="mb-4 px-1 shrink-0">
-            <div className="flex justify-between items-end border-b border-dotted border-slate-300 pb-2">
-                <div className="flex items-baseline gap-2">
-                    <span className="text-[8px] text-slate-400 uppercase font-black tracking-widest">Patient:</span>
-                    <span className="text-base font-bold text-slate-900">
-                        {patient ? `${patient.lastName.toUpperCase()} ${patient.firstName}` : '......................................................'}
-                    </span>
-                    {patient && <span className="text-[10px] text-slate-500 ml-2 font-sans font-medium">({new Date().getFullYear() - new Date(patient.birthDate).getFullYear()} ans)</span>}
-                </div>
-                <div className="flex items-baseline gap-1.5">
-                    <span className="text-[8px] text-slate-400 uppercase font-black">Date:</span>
-                    <span className="text-sm font-bold text-slate-800">{new Date(date).toLocaleDateString('fr-FR')}</span>
-                </div>
-            </div>
-        </div>
+</div>
 
-        {/* Prescription Content Area */}
-        <div className="flex-1 px-3 py-2 overflow-hidden">
-            <h2 className="text-center font-black text-lg uppercase underline decoration-2 underline-offset-[6px] mb-6 tracking-[0.4em] text-slate-800">Ordonnance</h2>
-            <div className="max-h-[105mm] overflow-hidden">
-                <ul className="space-y-4">
-                    {prescription.map((med, idx) => (
-                    <li key={idx} className="text-[13px] text-slate-800 flex items-start">
-                        <span className="font-black mr-4 text-slate-300 min-w-[15px]">{idx + 1}.</span> 
-                        <span className="flex-1 border-b border-slate-50 pb-1 font-medium">{med}</span>
-                    </li>
-                    ))}
-                    {prescription.length === 0 && (
-                        <div className="space-y-8 opacity-5 mt-4">
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <li key={i} className="border-b-2 border-slate-400 pb-1"></li>
-                            ))}
-                        </div>
-                    )}
-                </ul>
-            </div>
-        </div>
+{/* ================= PATIENT ================= */}
 
-        {/* Footer Section */}
-        <div className="mt-auto shrink-0 pt-3 border-t-2 border-slate-100">
-            <div className="flex justify-between items-center mb-4 px-4">
-                <div className="text-center border-2 border-slate-50 px-6 py-2 rounded-2xl bg-slate-50/30 flex-1 mr-4">
-                    <p className="font-black text-slate-300 uppercase tracking-[0.3em] text-[7px]">Signature et Cachet</p>
-                    <div className="h-10"></div>
-                </div>
-                <div className="w-14 h-14 bg-white p-1 border border-slate-200 rounded-lg shadow-sm">
-                    <img src={qrUrl} alt="QR Code" className="w-full h-full object-contain" />
-                </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-6 text-[9.5px] text-slate-600 font-sans mb-1.5 px-2">
-                <div className="text-left border-l-2 border-medical-500 pl-3">
-                    <p className="font-bold text-slate-800">Imm. Damou, 1er étage, Route de Biougra, Ait Melloul</p>
-                </div>
-                <div className="text-right border-r-2 border-medical-500 pr-3 font-medium">
-                    <p className="font-bold text-slate-800" dir="rtl">عمارة دامو الطابق الأول طريق بيوكرى أيت ملول</p>
-                </div>
-            </div>
+<div className="border-b border-dotted pb-2 mb-4 text-[10px] flex justify-between">
 
-            <div className="text-center mb-1">
-                <p className="text-[9.5px] font-medium text-slate-700 font-sans">
-                    Fixe: 05 28 24 11 19 | GSM: 06 41 23 83 44
-                </p>
-                <p className="text-[8px] font-bold text-slate-400 font-sans mt-0.5 uppercase tracking-wider">
-                    Email: chme25@gmail.com
-                </p>
-            </div>
+<div>
+<span className="font-bold">Patient :</span>{' '}
+{patient
+? `${patient.lastName.toUpperCase()} ${patient.firstName}`
+: '................................................'}
+</div>
 
-            <div className="mt-1 pt-2 border-t border-slate-100 text-center text-[7px] text-slate-300 font-black uppercase tracking-[0.2em]">
-                CMHE Ait Melloul
-            </div>
-        </div>
-    </div>
-  );
+<div>
+<span className="font-bold">Date :</span>{' '}
+{new Date(date).toLocaleDateString('fr-FR')}
+</div>
+
+</div>
+
+{/* ================= ORDONNANCE ================= */}
+
+<h2 className="text-center font-black uppercase underline mb-6 tracking-widest">
+Ordonnance
+</h2>
+
+<div className="flex-1">
+
+<ul className="space-y-4">
+
+{prescription.map((med, idx) => (
+<li key={idx} className="flex text-[13px]">
+
+<span className="mr-3 font-bold">{idx + 1}.</span>
+<span>{med}</span>
+
+</li>
+))}
+
+</ul>
+
+</div>
+
+{/* ================= FOOTER ================= */}
+
+<div className="mt-auto border-t pt-3">
+
+<div className="flex justify-between items-center mb-3">
+
+<div className="border rounded-lg flex-1 h-[25mm] mr-4 text-center text-[7px] text-slate-400 flex items-center justify-center">
+Signature & Cachet
+</div>
+
+<div className="w-[20mm] h-[20mm] border p-1">
+<img src={qrUrl} className="w-full h-full object-contain" />
+</div>
+
+</div>
+
+<div className="grid grid-cols-2 text-[9px] mb-2">
+
+<div className="text-left">
+Imm. Damou 1er étage Route Biougra Ait Melloul
+</div>
+
+<div dir="rtl" className="text-right">
+عمارة دامو الطابق الأول طريق بيوكرى أيت ملول
+</div>
+
+</div>
+
+<div className="text-center text-[9px]">
+05 28 24 11 19 – 06 41 23 83 44
+</div>
+
+<div className="text-center text-[8px] text-slate-400 mt-1">
+chme25@gmail.com
+</div>
+
+</div>
+
+</div>
+);
 };
