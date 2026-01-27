@@ -33,7 +33,7 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
 {/* ================= HEADER ================= */}
 
-<div className="grid grid-cols-[1fr_45mm_1fr] items-center gap-4 border-b-2 border-slate-800 pb-3 mb-3 min-h-[45mm]">
+<div className="grid grid-cols-[1fr_38mm_1fr] items-center gap-4 border-b-2 border-slate-800 pb-2 mb-2">
 
 {/* FR */}
 <div className="flex flex-col justify-center text-left text-[8.5px] leading-snug">
