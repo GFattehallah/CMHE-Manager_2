@@ -41,7 +41,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
             <div className="mb-12">
                {/* Utilisation de AppLogo avec une taille généreuse et un style propre pour le branding */}
               {/* <AppLogo size={48} className="shadow-2xl shadow-black/40 hover:scale-105 transition" />*/}
-              <AppLogo className="w-[48px] h-[48px] shadow-2xl shadow-black/40 hover:scale-105 transition" />
+              {/* <AppLogo className="w-[48px] h-[48px] shadow-2xl shadow-black/40 hover:scale-105 transition" /> */}
+              <AppLogo className="w-40 sm:w-52 md:w-64 h-auto shadow-2xl shadow-black/40 hover:scale-105 transition-transform duration-300" />
               
             </div>
             <h1 className="text-4xl font-black mb-4 tracking-tighter leading-tight uppercase">CMHE<br/>Manager Pro</h1>
