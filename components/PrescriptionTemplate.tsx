@@ -31,26 +31,24 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
       }}
     >
 
-{/* ================= HEADER ================= */}
+{/* HEADER */}
 
 <div
-className="grid grid-cols-[1fr_38mm_1fr] border-b-2 border-slate-800 pb-2 mb-3"
-style={{ height: '40mm' }}
+className="grid grid-cols-[1fr_40mm_1fr] border-b-2 border-slate-800 mb-3"
+style={{ height: '42mm' }}
 >
 
 {/* FR */}
-<div className="flex flex-col justify-center text-left text-[8.5px] leading-snug">
+<div className="flex flex-col justify-center text-left text-[8.5px] leading-tight">
 
 <h1 className="text-[13px] font-bold uppercase">
 Dr. Hasnaa El Malki
 </h1>
 
 <p className="italic font-semibold">Médecine Générale</p>
-
 <p>Lauréate Faculté Médecine Casablanca</p>
 <p>Diplôme Échographie – Marrakech</p>
 <p>Diplôme Diabétologie – Paris 13</p>
-
 <p className="font-bold uppercase mt-1">Suivi de Grossesse</p>
 
 </div>
@@ -58,28 +56,29 @@ Dr. Hasnaa El Malki
 {/* LOGO */}
 <div className="flex items-center justify-center">
 
-<AppLogo size="38mm" />
+<div className="w-[40mm] h-[40mm]">
+<AppLogo />
+</div>
 
 </div>
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-snug">
+<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-tight">
 
 <h1 className="text-[14px] font-bold">
 الدكتورة حسناء المالكي
 </h1>
 
 <p className="font-semibold">طب عام</p>
-
 <p>خريجة كلية الطب بالدار البيضاء</p>
 <p>دبلوم الفحص بالصدى (مراكش)</p>
 <p>دبلوم أمراض السكري (جامعة باريس 13)</p>
-
 <p className="font-bold mt-1">تتبع الحمل</p>
 
 </div>
 
 </div>
+
 {/* ================= PATIENT ================= */}
 
 <div className="border-b border-dotted pb-2 mb-4 text-[10px] flex justify-between">
