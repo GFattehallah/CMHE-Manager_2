@@ -3,43 +3,38 @@ import { LOGO_URL } from '../../constants';
 
 interface AppLogoProps {
   className?: string;
-  showText?: boolean;
 }
 
-export const AppLogo: React.FC<AppLogoProps> = ({
-  className = "",
-  showText = false
-}) => {
+export const AppLogo: React.FC<AppLogoProps> = ({ className = "" }) => {
 
-const [imageError, setImageError] = useState(false);
-const [resolvedUrl, setResolvedUrl] = useState<string>(LOGO_URL);
+const [error, setError] = useState(false);
+const [url, setUrl] = useState(LOGO_URL);
 
 useEffect(() => {
   try {
-    const href = window.location.href.split('#')[0];
-    const base = href.endsWith('/') ? href : href.substring(0, href.lastIndexOf('/') + 1);
-    const cleanLogoPath = LOGO_URL.replace('./', '');
-    const url = new URL(cleanLogoPath, base);
-    setResolvedUrl(url.href);
+    const base = window.location.href.split('#')[0];
+    const clean = LOGO_URL.replace('./', '');
+    setUrl(new URL(clean, base).href);
   } catch {
-    setResolvedUrl(LOGO_URL);
+    setUrl(LOGO_URL);
   }
 }, []);
 
 return (
+
 <div className={`w-full h-full flex items-center justify-center ${className}`}>
 
-{!imageError ? (
+{!error ? (
 
 <img
-src={resolvedUrl}
-alt="Logo"
-className="max-w-full max-h-full object-contain"
+src={url}
+className="w-full h-full object-contain"
+onError={() => setError(true)}
 />
 
 ) : (
 
-<div className="w-full h-full bg-medical-900 text-white flex items-center justify-center font-black text-xs">
+<div className="w-full h-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">
 CMHE
 </div>
 
