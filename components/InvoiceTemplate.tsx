@@ -17,14 +17,14 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
     <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
         
         {/* Header with Professional Info */}
+{/* ================= HEADER ================= */}
 
-      {/* ================= HEADER FACTURE ================= */}
-
-<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 h-[35mm]">
+<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 h-[36mm]">
 
 {/* FR */}
-<div className="flex flex-col justify-center text-left text-[9px] leading-tight">
+<div className="flex flex-col h-full justify-between text-left text-[9px] leading-tight">
 
+<div>
 <h1 className="text-[13px] font-bold uppercase">
 Dr. Hasnaa El Malki
 </h1>
@@ -34,27 +34,27 @@ Dr. Hasnaa El Malki
 <p>Lauréate Faculté Médecine Casablanca</p>
 <p>Échographie – Marrakech</p>
 <p>Diabétologie – Paris 13</p>
+</div>
 
-<p className="font-bold uppercase mt-1">
+<p className="font-bold uppercase">
 Suivi de Grossesse
 </p>
 
 </div>
 
 {/* LOGO */}
-<div className="flex items-center justify-center">
+<div className="flex items-center justify-center h-full">
 
 <div className="w-[36mm] h-[30mm] overflow-hidden flex items-center justify-center">
-
 <AppLogo className="-translate-y-2 scale-90" />
-
 </div>
 
 </div>
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-tight">
+<div dir="rtl" className="flex flex-col h-full justify-between text-right text-[9px] leading-tight">
 
+<div>
 <h1 className="text-[14px] font-bold">
 الدكتورة حسناء المالكي
 </h1>
@@ -64,8 +64,9 @@ Suivi de Grossesse
 <p>خريجة كلية الطب بالدار البيضاء</p>
 <p>دبلوم الفحص بالصدى (مراكش)</p>
 <p>دبلوم أمراض السكري (باريس 13)</p>
+</div>
 
-<p className="font-bold mt-1">
+<p className="font-bold">
 تتبع الحمل
 </p>
 
@@ -73,6 +74,8 @@ Suivi de Grossesse
 
 </div>
 
+
+      
       {/* Invoice Summary Box */}
         <div className="flex justify-between items-center mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
             <div>
