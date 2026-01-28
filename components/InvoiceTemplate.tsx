@@ -17,30 +17,63 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
     <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
         
         {/* Header with Professional Info */}
-        <div className="border-b-2 border-slate-800 pb-2 mb-3 grid grid-cols-3 items-center gap-2 shrink-0">
-            <div className="text-left flex flex-col justify-center h-full">
-                <h1 className="text-[13px] font-bold text-slate-900 uppercase leading-tight mb-0.5">Dr. Hasnaa El Malki</h1>
-                <p className="text-[9px] font-bold text-slate-700 mb-1 italic">Médecine Générale</p>
-                <div className="text-[7.5px] text-slate-600 leading-tight space-y-0.5 font-sans">
-                    <p>Faculté de Médecine Casablanca</p>
-                    <p>Echographie • Diabétologie</p>
-                    <p className="font-bold text-slate-800 uppercase tracking-tighter">Suivi de Grossesse</p>
-                </div>
-            </div>
-            <div className="flex flex-col items-center justify-center h-full">
-                <AppLogo size={60} />
-            </div>
-            <div className="text-right flex flex-col justify-center h-full font-sans" dir="rtl">
-                <h1 className="text-[14px] font-bold text-slate-900 leading-none mb-1">الدكتورة حسناء المـالكي</h1>
-                <p className="text-[10px] font-bold text-slate-700 mb-1">طب عــــام</p>
-                <div className="text-[8.5px] text-slate-600 leading-tight font-medium">
-                    <p>خريجة كلية الطب بالدار البيضاء</p>
-                    <p className="font-bold text-slate-800">تتبع الحمل</p>
-                </div>
-            </div>
-        </div>
 
-        {/* Invoice Summary Box */}
+      {/* ================= HEADER FACTURE ================= */}
+
+<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 h-[35mm]">
+
+{/* FR */}
+<div className="flex flex-col justify-center text-left text-[9px] leading-tight">
+
+<h1 className="text-[13px] font-bold uppercase">
+Dr. Hasnaa El Malki
+</h1>
+
+<p className="italic font-semibold">Médecine Générale</p>
+
+<p>Lauréate Faculté Médecine Casablanca</p>
+<p>Échographie – Marrakech</p>
+<p>Diabétologie – Paris 13</p>
+
+<p className="font-bold uppercase mt-1">
+Suivi de Grossesse
+</p>
+
+</div>
+
+{/* LOGO */}
+<div className="flex items-center justify-center">
+
+<div className="w-[36mm] h-[30mm] overflow-hidden flex items-center justify-center">
+
+<AppLogo className="-translate-y-2 scale-90" />
+
+</div>
+
+</div>
+
+{/* AR */}
+<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-tight">
+
+<h1 className="text-[14px] font-bold">
+الدكتورة حسناء المالكي
+</h1>
+
+<p className="font-semibold">طب عام</p>
+
+<p>خريجة كلية الطب بالدار البيضاء</p>
+<p>دبلوم الفحص بالصدى (مراكش)</p>
+<p>دبلوم أمراض السكري (باريس 13)</p>
+
+<p className="font-bold mt-1">
+تتبع الحمل
+</p>
+
+</div>
+
+</div>
+
+      {/* Invoice Summary Box */}
         <div className="flex justify-between items-center mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
             <div>
                 <h2 className="text-xl font-black text-slate-900 mb-0.5 tracking-tighter uppercase">Facture</h2>
