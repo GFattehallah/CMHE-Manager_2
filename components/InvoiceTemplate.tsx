@@ -19,12 +19,18 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
         {/* Header with Professional Info */}
 {/* ================= HEADER ================= */}
 
-<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 h-[36mm]">
+<div className="relative grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 min-h-[36mm]">
+
+{/* LOGO */}
+<div className="absolute left-1/2 top-0 -translate-x-1/2 w-[36mm] h-[36mm] flex items-start justify-center">
+
+<AppLogo className="w-full h-full object-contain -mt-3" />
+
+</div>
 
 {/* FR */}
-<div className="flex flex-col h-full justify-between text-left text-[9px] leading-tight">
+<div className="flex flex-col justify-start text-left text-[9px] leading-tight pr-4">
 
-<div>
 <h1 className="text-[13px] font-bold uppercase">
 Dr. Hasnaa El Malki
 </h1>
@@ -34,27 +40,19 @@ Dr. Hasnaa El Malki
 <p>Lauréate Faculté Médecine Casablanca</p>
 <p>Échographie – Marrakech</p>
 <p>Diabétologie – Paris 13</p>
-</div>
 
-<p className="font-bold uppercase">
+<p className="font-bold uppercase mt-auto">
 Suivi de Grossesse
 </p>
 
 </div>
 
-{/* LOGO */}
-<div className="flex items-center justify-center h-full">
-
-<div className="w-[36mm] h-[30mm] overflow-hidden flex items-center justify-center">
-<AppLogo className="-translate-y-2 scale-90" />
-</div>
-
-</div>
+{/* spacer central */}
+<div />
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col h-full justify-between text-right text-[9px] leading-tight">
+<div dir="rtl" className="flex flex-col justify-start text-right text-[9px] leading-tight pl-4">
 
-<div>
 <h1 className="text-[14px] font-bold">
 الدكتورة حسناء المالكي
 </h1>
@@ -64,16 +62,14 @@ Suivi de Grossesse
 <p>خريجة كلية الطب بالدار البيضاء</p>
 <p>دبلوم الفحص بالصدى (مراكش)</p>
 <p>دبلوم أمراض السكري (باريس 13)</p>
-</div>
 
-<p className="font-bold">
+<p className="font-bold mt-auto">
 تتبع الحمل
 </p>
 
 </div>
 
 </div>
-
 
       
       {/* Invoice Summary Box */}
