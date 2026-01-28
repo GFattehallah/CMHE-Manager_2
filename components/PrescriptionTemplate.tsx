@@ -54,10 +54,20 @@ Dr. Hasnaa El Malki
 </div>
 
 {/* LOGO */}
-<div className="flex items-center justify-center">
+  {/* <div className="flex items-center justify-center">
 
 <div className="w-[40mm] h-[40mm]">
 <AppLogo />
+</div>
+
+</div> */}
+{/* LOGO */}
+<div className="flex items-center justify-center">
+
+<div className="w-[38mm] h-[32mm] overflow-hidden flex items-center justify-center">
+
+<AppLogo className="-translate-y-2 scale-90" />
+
 </div>
 
 </div>
