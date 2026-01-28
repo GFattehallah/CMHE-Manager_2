@@ -33,57 +33,52 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
 {/* HEADER */}
 
-<div
-className="grid grid-cols-[1fr_40mm_1fr] border-b-2 border-slate-800 mb-3"
-style={{ height: '42mm' }}
->
+{/* ================= HEADER ================= */}
+
+<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 min-h-[36mm]">
 
 {/* FR */}
-<div className="flex flex-col justify-center text-left text-[8.5px] leading-tight">
+<div className="flex flex-col justify-between text-left text-[9px] leading-tight pr-4">
 
 <h1 className="text-[13px] font-bold uppercase">
 Dr. Hasnaa El Malki
 </h1>
 
 <p className="italic font-semibold">Médecine Générale</p>
+
 <p>Lauréate Faculté Médecine Casablanca</p>
-<p>Diplôme Échographie – Marrakech</p>
-<p>Diplôme Diabétologie – Paris 13</p>
-<p className="font-bold uppercase mt-1">Suivi de Grossesse</p>
+<p>Échographie – Marrakech</p>
+<p>Diabétologie – Paris 13</p>
+
+<p className="font-bold uppercase">
+Suivi de Grossesse
+</p>
 
 </div>
 
 {/* LOGO */}
-  {/* <div className="flex items-center justify-center">
+<div className="h-[36mm] flex justify-center items-start">
 
-<div className="w-[40mm] h-[40mm]">
-<AppLogo />
-</div>
-
-</div> */}
-{/* LOGO */}
-<div className="flex items-center justify-center">
-
-<div className="w-[38mm] h-[32mm] overflow-hidden flex items-center justify-center">
-
-<AppLogo className="-translate-y-2 scale-90" />
-
-</div>
+<AppLogo className="h-full" />
 
 </div>
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col justify-center text-right text-[9px] leading-tight">
+<div dir="rtl" className="flex flex-col justify-between text-right text-[9px] leading-tight pl-4">
 
 <h1 className="text-[14px] font-bold">
 الدكتورة حسناء المالكي
 </h1>
 
 <p className="font-semibold">طب عام</p>
+
 <p>خريجة كلية الطب بالدار البيضاء</p>
 <p>دبلوم الفحص بالصدى (مراكش)</p>
-<p>دبلوم أمراض السكري (جامعة باريس 13)</p>
-<p className="font-bold mt-1">تتبع الحمل</p>
+<p>دبلوم أمراض السكري (باريس 13)</p>
+
+<p className="font-bold">
+تتبع الحمل
+</p>
 
 </div>
 
