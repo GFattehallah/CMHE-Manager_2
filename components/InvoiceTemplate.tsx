@@ -14,8 +14,14 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ patient, invoi
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=0c4a6e`;
 
   return (
-    <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
-        
+   // <div className="w-[148mm] h-[210mm] mx-auto bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 overflow-hidden box-border" style={{ pageBreakInside: 'avoid' }}>
+     <div className="h-full overflow-y-auto flex justify-center py-6">
+
+  <div
+    className="w-[148mm] min-h-[210mm] bg-white p-6 flex flex-col font-sans text-slate-900 leading-tight relative border border-slate-100 box-border"
+    style={{ pageBreakInside: 'avoid' }}
+  >
+   
         {/* Header with Professional Info */}
 {/* ================= HEADER ================= */}
 
