@@ -35,48 +35,44 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
 {/* ================= HEADER ================= */}
 
-<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-2 mb-3 min-h-[36mm]">
+<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-1 mb-2">
 
 {/* FR */}
-<div className="flex flex-col justify-between text-left text-[9px] leading-tight pr-4">
+<div className="flex flex-col text-left text-[9px] leading-[1.1] pr-3 space-y-0">
 
-<h1 className="text-[13px] font-bold uppercase">
+<h1 className="text-[12px] font-bold uppercase whitespace-nowrap m-0 p-0">
 Dr. Hasnaa El Malki
 </h1>
 
-<p className="italic font-semibold">Médecine Générale</p>
+<p className="italic font-semibold m-0 p-0">Médecine Générale</p>
+<p className="m-0 p-0">Lauréate Faculté Médecine Casablanca</p>
+<p className="m-0 p-0">Échographie – Marrakech</p>
+<p className="m-0 p-0">Diabétologie – Paris 13</p>
 
-<p>Lauréate Faculté Médecine Casablanca</p>
-<p>Échographie – Marrakech</p>
-<p>Diabétologie – Paris 13</p>
-
-<p className="font-bold uppercase">
+<p className="font-bold uppercase m-0 p-0">
 Suivi de Grossesse
 </p>
 
 </div>
 
 {/* LOGO */}
-<div className="h-[36mm] flex justify-center items-start">
-
-<AppLogo className="h-full" />
-
+<div className="flex justify-center items-start">
+<AppLogo className="h-[30mm]" />
 </div>
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col justify-between text-right text-[9px] leading-tight pl-4">
+<div dir="rtl" className="flex flex-col text-right text-[9px] leading-[1.1] pl-3 space-y-0">
 
-<h1 className="text-[14px] font-bold">
+<h1 className="text-[12px] font-bold m-0 p-0">
 الدكتورة حسناء المالكي
 </h1>
 
-<p className="font-semibold">طب عام</p>
+<p className="font-semibold m-0 p-0">طب عام</p>
+<p className="m-0 p-0">خريجة كلية الطب بالدار البيضاء</p>
+<p className="m-0 p-0">دبلوم الفحص بالصدى (مراكش)</p>
+<p className="m-0 p-0">دبلوم أمراض السكري (باريس 13)</p>
 
-<p>خريجة كلية الطب بالدار البيضاء</p>
-<p>دبلوم الفحص بالصدى (مراكش)</p>
-<p>دبلوم أمراض السكري (باريس 13)</p>
-
-<p className="font-bold">
+<p className="font-bold m-0 p-0">
 تتبع الحمل
 </p>
 
