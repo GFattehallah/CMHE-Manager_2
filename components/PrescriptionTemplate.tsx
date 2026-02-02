@@ -22,57 +22,63 @@ export const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
   return (
     <div
-      className="mx-auto bg-white font-serif text-slate-900 box-border flex flex-col overflow-hidden border"
+      className="mx-auto bg-white font-serif text-slate-900 box-border flex flex-col overflow-hidden"
       style={{
         width: '148mm',
         height: '210mm',
-        padding: '10mm',
+        padding: '6mm',
         pageBreakInside: 'avoid'
       }}
     >
 
-{/* HEADER */}
+<style>
+{`
+@media print {
+  body { margin: 0; }
+}
+`}
+</style>
 
 {/* ================= HEADER ================= */}
 
-<div className="grid grid-cols-[1fr_36mm_1fr] border-b-2 border-slate-800 pb-1 mb-2">
+<div className="grid grid-cols-[1fr_26mm_1fr] items-center border-b border-slate-800 pb-[1.5mm] mb-[2mm]">
 
 {/* FR */}
-<div className="flex flex-col text-left text-[9px] leading-[1.1] pr-3 space-y-0">
+<div className="flex flex-col justify-center text-left text-[8.5px] leading-[1] tracking-tight pr-2">
 
-<h1 className="text-[12px] font-bold uppercase whitespace-nowrap m-0 p-0">
-Dr. Hasnaa El Malki
+<h1 className="text-[11px] font-bold uppercase whitespace-nowrap m-0 p-0">
+DR. HASNAA EL MALKI
 </h1>
 
 <p className="italic font-semibold m-0 p-0">Médecine Générale</p>
-<p className="m-0 p-0">Lauréate Faculté Médecine Casablanca</p>
-<p className="m-0 p-0">Échographie – Marrakech</p>
+<p className="m-0 p-0">Lauréate FM Casablanca</p>
+<p className="m-0 p-0">Écho – Marrakech</p>
 <p className="m-0 p-0">Diabétologie – Paris 13</p>
 
-<p className="font-bold uppercase m-0 p-0">
-Suivi de Grossesse
+<p className="font-semibold uppercase m-0 p-0">
+Suivi Grossesse
 </p>
 
 </div>
 
 {/* LOGO */}
-<div className="flex justify-center items-start">
-<AppLogo className="h-[30mm]" />
+<div className="flex justify-center items-center">
+<AppLogo className="h-[21mm]" />
 </div>
 
 {/* AR */}
-<div dir="rtl" className="flex flex-col text-right text-[9px] leading-[1.1] pl-3 space-y-0">
+<div dir="rtl" className="flex flex-col justify-center text-right text-[8.5px] leading-[1] tracking-tight pl-2">
 
-<h1 className="text-[12px] font-bold m-0 p-0">
+<h1 className="text-[11px] font-bold m-0 p-0">
 الدكتورة حسناء المالكي
 </h1>
 
 <p className="font-semibold m-0 p-0">طب عام</p>
-<p className="m-0 p-0">خريجة كلية الطب بالدار البيضاء</p>
-<p className="m-0 p-0">دبلوم الفحص بالصدى (مراكش)</p>
-<p className="m-0 p-0">دبلوم أمراض السكري (باريس 13)</p>
+<p className="m-0 p-0">خريجة كلية الطب</p>
+<p className="m-0 p-0">دبلوم الصدى</p>
+<p className="m-0 p-0">دبلوم السكري</p>
 
-<p className="font-bold m-0 p-0">
+<p className="font-semibold m-0 p-0">
 تتبع الحمل
 </p>
 
@@ -82,13 +88,13 @@ Suivi de Grossesse
 
 {/* ================= PATIENT ================= */}
 
-<div className="border-b border-dotted pb-2 mb-4 text-[10px] flex justify-between">
+<div className="border-b border-dotted pb-1 mb-2 text-[9px] flex justify-between">
 
 <div>
 <span className="font-bold">Patient :</span>{' '}
 {patient
 ? `${patient.lastName.toUpperCase()} ${patient.firstName}`
-: '................................................'}
+: '................................'}
 </div>
 
 <div>
@@ -100,18 +106,18 @@ Suivi de Grossesse
 
 {/* ================= ORDONNANCE ================= */}
 
-<h2 className="text-center font-black uppercase underline mb-6 tracking-widest">
+<h2 className="text-center font-black uppercase underline mb-3 tracking-widest text-[12px]">
 Ordonnance
 </h2>
 
 <div className="flex-1">
 
-<ul className="space-y-4">
+<ul className="space-y-2">
 
 {prescription.map((med, idx) => (
-<li key={idx} className="flex text-[13px]">
+<li key={idx} className="flex text-[12px]">
 
-<span className="mr-3 font-bold">{idx + 1}.</span>
+<span className="mr-2 font-bold">{idx + 1}.</span>
 <span>{med}</span>
 
 </li>
@@ -123,23 +129,23 @@ Ordonnance
 
 {/* ================= FOOTER ================= */}
 
-<div className="mt-auto border-t pt-3">
+<div className="mt-auto border-t pt-2">
 
-<div className="flex justify-between items-center mb-3">
+<div className="flex justify-between items-center mb-2">
 
-<div className="border rounded-lg flex-1 h-[25mm] mr-4 text-center text-[7px] text-slate-400 flex items-center justify-center">
+<div className="border flex-1 h-[18mm] mr-3 text-center text-[7px] text-slate-400 flex items-center justify-center">
 Signature & Cachet
 </div>
 
-<div className="w-[20mm] h-[20mm] border p-1">
+<div className="w-[15mm] h-[15mm] border p-1">
 <img src={qrUrl} className="w-full h-full object-contain" />
 </div>
 
 </div>
 
-<div className="grid grid-cols-2 text-[9px] mb-2">
+<div className="grid grid-cols-2 text-[8px] mb-1">
 
-<div className="text-left">
+<div>
 Imm. Damou 1er étage Route Biougra Ait Melloul
 </div>
 
@@ -149,11 +155,11 @@ Imm. Damou 1er étage Route Biougra Ait Melloul
 
 </div>
 
-<div className="text-center text-[9px]">
+<div className="text-center text-[8px]">
 05 28 24 11 19 – 06 41 23 83 44
 </div>
 
-<div className="text-center text-[8px] text-slate-400 mt-1">
+<div className="text-center text-[7px] text-slate-400 mt-1">
 chme25@gmail.com
 </div>
 
